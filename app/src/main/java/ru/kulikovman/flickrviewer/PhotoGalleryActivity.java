@@ -14,7 +14,7 @@ import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
-    private static final String TAG = "log";
+    private static final String TAG = "PhotoGalleryActivity";
 
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
