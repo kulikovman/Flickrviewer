@@ -12,7 +12,7 @@ import java.io.IOException;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
-    private static final String TAG = "PhotoGalleryFragment";
+    private static final String TAG = "log";
 
     private RecyclerView mRecyclerView;
     private PhotoAdapter mAdapter;
@@ -27,6 +27,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         initRecyclerView();
 
+        // Запуск фоновой задачи
+        new FetchItemsTask().execute();
+
     }
 
     private void initRecyclerView() {
@@ -38,13 +41,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private class FetchItemsTask extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                String result = new FlickrFetchr()
-                        .getUrlString("https://www.bignerdranch.com");
-                Log.i(TAG, "Fetched contents of URL: " + result);
-            } catch (IOException ioe) {
-                Log.e(TAG, "Failed to fetch URL: ", ioe);
-            }
+            new FlickrFetchr().fetchItems();
             return null;
         }
     }
