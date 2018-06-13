@@ -7,42 +7,58 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
+import ru.kulikovman.flickrviewer.models.GalleryItem;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
-    private static final String TAG = "PhotoGalleryActivity";
+    private static final String TAG = "log";
 
     private RecyclerView mRecyclerView;
-    private PhotoAdapter mAdapter;
+    private PhotoAdapter mPhotoAdapter;
+    private List<GalleryItem> mItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
 
-        // Инициализация вью элементов
+        // Инициализация RecyclerView
         mRecyclerView = findViewById(R.id.photo_recycler_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setHasFixedSize(true);
 
-        initRecyclerView();
+        setupAdapter();
 
         // Запуск фоновой задачи
         new FetchItemsTask().execute();
 
     }
 
-    private void initRecyclerView() {
-        mAdapter = new PhotoAdapter();
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        mRecyclerView.setAdapter(mAdapter);
+    private void setupAdapter() {
+        if (mPhotoAdapter == null) {
+            mPhotoAdapter = new PhotoAdapter(mItems);
+            mRecyclerView.setAdapter(mPhotoAdapter);
+        } else {
+            mPhotoAdapter.setGalleryItems(mItems);
+            mPhotoAdapter.notifyDataSetChanged();
+        }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void,Void,Void> {
+    private class FetchItemsTask extends AsyncTask<Void,Void,List<GalleryItem>> {
         @Override
-        protected Void doInBackground(Void... params) {
+        protected List<GalleryItem> doInBackground(Void... params) {
             new FlickrFetchr().fetchItems();
-            return null;
+            return new FlickrFetchr().fetchItems();
+        }
+
+        @Override
+        protected void onPostExecute(List<GalleryItem> items) {
+            Log.d(TAG, "Список содержит: " + items.size() + " значений");
+            mItems = items;
+            setupAdapter();
         }
     }
 }
