@@ -1,45 +1,56 @@
 package ru.kulikovman.flickrviewer.adapters;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import ru.kulikovman.flickrviewer.R;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
     private List<GalleryItem> mGalleryItems;
+    private Context mContext;
 
-    public PhotoAdapter(List<GalleryItem> galleryItems) {
+    public PhotoAdapter(Context context, List<GalleryItem> galleryItems) {
+        mContext = context;
         mGalleryItems = galleryItems;
     }
 
     public class PhotoHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
+        private ImageView mItemImageView;
 
         public PhotoHolder(View itemView) {
             super(itemView);
-            mTitleTextView = (TextView) itemView;
+            mItemImageView = itemView.findViewById(R.id.image_container);
         }
-        public void bindGalleryItem(GalleryItem item) {
-            mTitleTextView.setText(item.toString());
+
+        public void bindDrawable(Drawable drawable) {
+            mItemImageView.setImageDrawable(drawable);
         }
     }
 
     @NonNull
     @Override
     public PhotoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        TextView textView = new TextView(parent.getContext());
-        return new PhotoHolder(textView);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.gallery_item, parent, false);
+        return new PhotoHolder(view);
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
         GalleryItem galleryItem = mGalleryItems.get(position);
-        photoHolder.bindGalleryItem(galleryItem);
+        Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
+        photoHolder.bindDrawable(placeholder);
     }
 
     @Override

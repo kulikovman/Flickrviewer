@@ -39,7 +39,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         if (mPhotoAdapter == null) {
-            mPhotoAdapter = new PhotoAdapter(mItems);
+            mPhotoAdapter = new PhotoAdapter(this, mItems);
             mRecyclerView.setAdapter(mPhotoAdapter);
         } else {
             mPhotoAdapter.setGalleryItems(mItems);
