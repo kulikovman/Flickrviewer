@@ -4,22 +4,27 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.List;
 
 import ru.kulikovman.flickrviewer.R;
+import ru.kulikovman.flickrviewer.ThumbnailDownloader;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
-    private List<GalleryItem> mGalleryItems;
-    private Context mContext;
+    private static final String TAG = "PhotoAdapter";
 
-    public PhotoAdapter(Context context, List<GalleryItem> galleryItems) {
+    private Context mContext;
+    private List<GalleryItem> mGalleryItems;
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+
+    public PhotoAdapter(Context context, List<GalleryItem> galleryItems, ThumbnailDownloader<PhotoHolder> thumbnailDownloader) {
+        mThumbnailDownloader = thumbnailDownloader;
         mContext = context;
         mGalleryItems = galleryItems;
     }
@@ -51,6 +56,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
         GalleryItem galleryItem = mGalleryItems.get(position);
         Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
         photoHolder.bindDrawable(placeholder);
+        mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
     }
 
     @Override
@@ -61,4 +67,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
     public void setGalleryItems(List<GalleryItem> items) {
         mGalleryItems = items;
     }
+
+
 }

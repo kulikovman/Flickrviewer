@@ -19,11 +19,18 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private List<GalleryItem> mItems = new ArrayList<>();
+    private ThumbnailDownloader<PhotoAdapter.PhotoHolder> mThumbnailDownloader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
+
+        // Запуск фонового загрузчика миниатюр
+        mThumbnailDownloader = new ThumbnailDownloader<>();
+        mThumbnailDownloader.start();
+        mThumbnailDownloader.getLooper();
+        Log.i(TAG, "Background thread started");
 
         // Инициализация RecyclerView
         mRecyclerView = findViewById(R.id.photo_recycler_view);
@@ -34,12 +41,20 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         // Запуск фоновой задачи
         new FetchItemsTask().execute();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Отключения загрузчика миниатюр
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "Background thread destroyed");
     }
 
     private void setupAdapter() {
         if (mPhotoAdapter == null) {
-            mPhotoAdapter = new PhotoAdapter(this, mItems);
+            mPhotoAdapter = new PhotoAdapter(this, mItems, mThumbnailDownloader);
             mRecyclerView.setAdapter(mPhotoAdapter);
         } else {
             mPhotoAdapter.setGalleryItems(mItems);
