@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,8 +55,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         setupAdapter();
 
-        // Запуск фоновой задачи
-        new FetchItemsTask().execute();
+        // Получение списка фотографий
+        updateItems();
     }
 
     @Override
@@ -70,8 +71,32 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Подключаем макет меню
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+
+        // Обработчик поисковых запросов
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener (new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        Log.d(TAG, "QueryTextSubmit: " + s);
+                        updateItems();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        Log.d(TAG, "QueryTextChange: " + s);
+                        return false;
+                    }
+                });
+
         return true;
+    }
+
+    private void updateItems () {
+        new FetchItemsTask().execute();
     }
 
     @Override
