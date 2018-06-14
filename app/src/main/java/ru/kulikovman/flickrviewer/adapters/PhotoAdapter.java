@@ -54,8 +54,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
         GalleryItem galleryItem = mGalleryItems.get(position);
-        Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
-        photoHolder.bindDrawable(placeholder);
+        //Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
+        //photoHolder.bindDrawable(placeholder);
         mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
     }
 
