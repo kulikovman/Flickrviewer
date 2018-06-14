@@ -76,11 +76,15 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void,Void,List<GalleryItem>> {
+    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-            new FlickrFetchr().fetchItems();
-            return new FlickrFetchr().fetchItems();
+            String query = "robot"; // Для тестирования
+            if (query == null) {
+                return new FlickrFetchr().fetchRecentPhotos();
+            } else {
+                return new FlickrFetchr().searchPhotos(query);
+            }
         }
 
         @Override
