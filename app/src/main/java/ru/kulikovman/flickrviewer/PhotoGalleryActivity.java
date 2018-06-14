@@ -84,6 +84,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "QueryTextSubmit: " + s);
                 QueryPreferences.setStoredQuery(PhotoGalleryActivity.this, s);
+                searchView.onActionViewCollapsed();
                 updateItems();
                 return true;
             }
