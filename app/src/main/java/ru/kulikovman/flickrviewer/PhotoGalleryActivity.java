@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,22 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         mThumbnailDownloader.clearQueue();
         mThumbnailDownloader.quit();
         Log.i(TAG, "Background thread destroyed");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Получаем id элемента меню
+        int id = item.getItemId();
+
+        // Обрабатываем нажатие
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupAdapter() {
