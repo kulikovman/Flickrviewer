@@ -1,5 +1,6 @@
 package ru.kulikovman.flickrviewer;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -84,6 +85,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "QueryTextSubmit: " + s);
                 QueryPreferences.setStoredQuery(PhotoGalleryActivity.this, s);
+                searchView.clearFocus();
                 searchView.onActionViewCollapsed();
                 updateItems();
                 return true;
@@ -136,10 +138,17 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+        private ProgressDialog mProgressDialog;
         private String mQuery;
 
         public FetchItemsTask(String query) {
             mQuery = query;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog = ProgressDialog
+                    .show(PhotoGalleryActivity.this, "Loading", "Wait while loading...", false);
         }
 
         @Override
@@ -152,7 +161,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+
+        }
+
+        @Override
         protected void onPostExecute(List<GalleryItem> items) {
+            mProgressDialog.dismiss();
             Log.d(TAG, "Список содержит: " + items.size() + " значений");
             mItems = items;
             setupAdapter();
