@@ -5,9 +5,11 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.List;
@@ -37,7 +39,17 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
             mItemImageView = itemView.findViewById(R.id.image_container);
         }
 
+        public void bindTempDrawable(Drawable drawable) {
+            mItemImageView.getLayoutParams().width = FrameLayout.LayoutParams.WRAP_CONTENT;
+            mItemImageView.getLayoutParams().height = FrameLayout.LayoutParams.WRAP_CONTENT;
+            mItemImageView.requestLayout();
+            mItemImageView.setImageDrawable(drawable);
+        }
+
         public void bindDrawable(Drawable drawable) {
+            mItemImageView.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
+            mItemImageView.getLayoutParams().height = convertDpToPx(mContext, 120);
+            mItemImageView.requestLayout();
             mItemImageView.setImageDrawable(drawable);
         }
     }
@@ -54,6 +66,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
         GalleryItem galleryItem = mGalleryItems.get(position);
+
+        // Временная картинка
+        Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
+        photoHolder.bindTempDrawable(placeholder);
+
+        // Загрузка реальной картинки
         mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
     }
 
@@ -65,6 +83,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
     public void setGalleryItems(List<GalleryItem> items) {
         mGalleryItems = items;
     }
-
-
+    public int convertDpToPx(Context context, int valueInDp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
+                context.getResources().getDisplayMetrics());
+    }
 }
