@@ -77,36 +77,41 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         // Обработчик поисковых запросов
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener (new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        Log.d(TAG, "QueryTextSubmit: " + s);
-                        updateItems();
-                        return true;
-                    }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.d(TAG, "QueryTextSubmit: " + s);
+                QueryPreferences.setStoredQuery(getApplicationContext(), s);
+                updateItems();
+                return true;
+            }
 
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        Log.d(TAG, "QueryTextChange: " + s);
-                        return false;
-                    }
-                });
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.d(TAG, "QueryTextChange: " + s);
+                return false;
+            }
+        });
 
         return true;
     }
 
-    private void updateItems () {
-        new FetchItemsTask().execute();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Получаем id элемента меню
-        int id = item.getItemId();
-
         // Обрабатываем нажатие
+        switch (item.getItemId()) {
+            case R.id.menu_item_clear:
+                QueryPreferences.setStoredQuery(this, null);
+                updateItems();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-        return super.onOptionsItemSelected(item);
+    private void updateItems() {
+        String query = QueryPreferences.getStoredQuery(this);
+        new FetchItemsTask(query).execute();
     }
 
     private void setupAdapter() {
@@ -120,13 +125,18 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+        private String mQuery;
+
+        public FetchItemsTask(String query) {
+            mQuery = query;
+        }
+
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-            String query = "robot"; // Для тестирования
-            if (query == null) {
+            if (mQuery == null) {
                 return new FlickrFetchr().fetchRecentPhotos();
             } else {
-                return new FlickrFetchr().searchPhotos(query);
+                return new FlickrFetchr().searchPhotos(mQuery);
             }
         }
 
