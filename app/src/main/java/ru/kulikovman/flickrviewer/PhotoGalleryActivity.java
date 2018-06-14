@@ -1,5 +1,6 @@
 package ru.kulikovman.flickrviewer;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +83,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "QueryTextSubmit: " + s);
-                QueryPreferences.setStoredQuery(getApplicationContext(), s);
+                QueryPreferences.setStoredQuery(PhotoGalleryActivity.this, s);
                 updateItems();
                 return true;
             }
@@ -90,6 +92,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 Log.d(TAG, "QueryTextChange: " + s);
                 return false;
+            }
+        });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = QueryPreferences.getStoredQuery(PhotoGalleryActivity.this);
+                searchView.setQuery(query, false);
             }
         });
 
