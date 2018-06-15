@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import ru.kulikovman.flickrviewer.R;
@@ -52,6 +54,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
             mItemImageView.requestLayout();
             mItemImageView.setImageDrawable(drawable);
         }
+
+        public void bindGalleryItem(GalleryItem galleryItem) {
+            Picasso.get()
+                    .load(galleryItem.getUrl())
+                    .placeholder(R.drawable.ic_autorenew_24dp)
+                    .into(mItemImageView);
+        }
     }
 
     @NonNull
@@ -66,13 +75,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
         GalleryItem galleryItem = mGalleryItems.get(position);
-
-        // Временная картинка
+        photoHolder.bindGalleryItem(galleryItem);
+        /*// Временная картинка
         Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
         photoHolder.bindTempDrawable(placeholder);
 
         // Загрузка реальной картинки
-        mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
+        mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());*/
     }
 
     @Override
@@ -84,7 +93,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
         mGalleryItems = items;
     }
     public int convertDpToPx(Context context, int valueInDp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
+        int temp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
                 context.getResources().getDisplayMetrics());
+        Log.d(TAG, "Size: " + temp);
+
+        return temp;
     }
 }

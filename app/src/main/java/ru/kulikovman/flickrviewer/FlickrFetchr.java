@@ -29,7 +29,9 @@ public class FlickrFetchr {
             .appendQueryParameter("api_key", API_KEY)
             .appendQueryParameter("format", "json")
             .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("extras", "url_s")
+            .appendQueryParameter("per_page", "50")
+            .appendQueryParameter("page", "1")
+            .appendQueryParameter("extras", "url_n")
             .build();
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
@@ -41,9 +43,7 @@ public class FlickrFetchr {
             InputStream in = connection.getInputStream();
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException(connection.getResponseMessage() +
-                        ": with " +
-                        urlSpec);
+                throw new IOException(connection.getResponseMessage() + ": with " + urlSpec);
             }
 
             int bytesRead = 0;
@@ -110,11 +110,11 @@ public class FlickrFetchr {
             item.setId(photoJsonObject.getString("id"));
             item.setCaption(photoJsonObject.getString("title"));
 
-            if (!photoJsonObject.has("url_s")) {
+            if (!photoJsonObject.has("url_n")) {
                 continue;
             }
 
-            item.setUrl(photoJsonObject.getString("url_s"));
+            item.setUrl(photoJsonObject.getString("url_n"));
             items.add(item);
         }
     }
