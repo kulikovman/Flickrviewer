@@ -62,35 +62,28 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
                         if (response.isSuccessful()) {
-                            //Log.d(TAG, "response " + response.body().getPhotos().getPhoto().size());
                             Log.d(TAG, "Запрос прошел успешно: " + response.code());
+
+                            if (response.body() != null) {
+                                Log.d(TAG, "response.body() != null");
+                                // Добавляем новые фото в список
+                                for (Photo photo : response.body().getPhotos().getPhoto()) {
+                                    if (photo.getUrlN() != null) {
+                                        mPhotoList.add(photo);
+                                        Log.d(TAG, "Добавили фото в список");
+                                    }
+                                }
+
+                                setupAdapter();
+                            }
                         } else {
-                            Log.d(TAG, "Неудача: " + response.code());
+                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
                         }
-
-                /*List<FlickrResponse> photos = response.body();
-
-                if (photos == null) {
-                    Log.d(TAG, "photosResponses == null");
-                } else {
-                    Log.d(TAG, "Количество объектов: " + photos.size());
-                }*/
-
-                /*if (response.body() != null) {
-
-                    //mPhotoList.addAll(photosResponses);
-
-                    setupAdapter();
-                }*/
-
-                        //Log.d(TAG, "Что-то не сработало...");
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "An error occurred during networking");
-                        Log.d(TAG, "Описание ошибки: " + t.getMessage());
-                        Log.d(TAG, "Описание ошибки: " + t.toString());
+                        Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
                     }
                 });
 
@@ -164,10 +157,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         if (mPhotoAdapter == null) {
-            mPhotoAdapter = new PhotoAdapter(this, mItems, mThumbnailDownloader);
+            //mPhotoAdapter = new PhotoAdapter(this, mItems, mThumbnailDownloader);
+            mPhotoAdapter = new PhotoAdapter(this, mPhotoList);
             mRecyclerView.setAdapter(mPhotoAdapter);
         } else {
-            mPhotoAdapter.setGalleryItems(mItems);
+            mPhotoAdapter.setPhotos(mPhotoList);
             mPhotoAdapter.notifyDataSetChanged();
         }
     }

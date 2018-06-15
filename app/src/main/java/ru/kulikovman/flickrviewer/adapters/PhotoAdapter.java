@@ -19,18 +19,19 @@ import java.util.List;
 import ru.kulikovman.flickrviewer.R;
 import ru.kulikovman.flickrviewer.ThumbnailDownloader;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
+import ru.kulikovman.flickrviewer.models.Photo;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
     private static final String TAG = "PhotoAdapter";
 
     private Context mContext;
-    private List<GalleryItem> mGalleryItems;
-    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+    private List<Photo> mPhotos;
+    //private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
-    public PhotoAdapter(Context context, List<GalleryItem> galleryItems, ThumbnailDownloader<PhotoHolder> thumbnailDownloader) {
-        mThumbnailDownloader = thumbnailDownloader;
+    public PhotoAdapter(Context context, List<Photo> photos) {
+        //mThumbnailDownloader = thumbnailDownloader;
         mContext = context;
-        mGalleryItems = galleryItems;
+        mPhotos = photos;
     }
 
     public class PhotoHolder extends RecyclerView.ViewHolder {
@@ -55,9 +56,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
             mItemImageView.setImageDrawable(drawable);
         }
 
-        public void bindGalleryItem(GalleryItem galleryItem) {
+        public void bindGalleryItem(Photo photo) {
             Picasso.get()
-                    .load(galleryItem.getUrl())
+                    .load(photo.getUrlN())
                     //.placeholder(R.drawable.ic_autorenew_24dp)
                     .into(mItemImageView);
         }
@@ -74,23 +75,23 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
-        GalleryItem galleryItem = mGalleryItems.get(position);
-        photoHolder.bindGalleryItem(galleryItem);
+        Photo photo = mPhotos.get(position);
+        photoHolder.bindGalleryItem(photo);
         /*// Временная картинка
         Drawable placeholder = mContext.getResources().getDrawable(R.drawable.ic_autorenew_24dp);
         photoHolder.bindTempDrawable(placeholder);
 
         // Загрузка реальной картинки
-        mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());*/
+        mThumbnailDownloader.queueThumbnail(photoHolder, photo.getUrl());*/
     }
 
     @Override
     public int getItemCount() {
-        return  mGalleryItems.size();
+        return  mPhotos.size();
     }
 
-    public void setGalleryItems(List<GalleryItem> items) {
-        mGalleryItems = items;
+    public void setPhotos(List<Photo> photos) {
+        mPhotos = photos;
     }
     public int convertDpToPx(Context context, int valueInDp) {
         int temp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
