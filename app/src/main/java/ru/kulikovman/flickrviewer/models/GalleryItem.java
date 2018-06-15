@@ -1,8 +1,8 @@
 package ru.kulikovman.flickrviewer.models;
 
 public class GalleryItem {
-    private String mCaption;
     private String mId;
+    private String mCaption;
     private String mUrl;
 
     public String getId() {

@@ -1,12 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,40 +11,39 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
+import ru.kulikovman.flickrviewer.models.Photo;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
+
+    private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
+    private static final String RECENTS_METHOD = "flickr.photos.getRecent";
+    private static final String SEARCH_METHOD = "flickr.photos.search";
+    private static final String SIZE_URL = "url_n";
+    private static final String FORMAT = "json";
+    private static final String NOJSONCALLBACK = "1";
 
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private List<GalleryItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoAdapter.PhotoHolder> mThumbnailDownloader;
 
+    private List<Photo> mPhotoList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
-
-        // Запуск фонового загрузчика миниатюр
-        Handler responseHandler = new Handler();
-        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
-        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoAdapter.PhotoHolder>() {
-            @Override
-            public void onThumbnailDownloaded(PhotoAdapter.PhotoHolder photoHolder, Bitmap bitmap) {
-                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                photoHolder.bindDrawable(drawable);
-            }
-        });
-
-        mThumbnailDownloader.start();
-        mThumbnailDownloader.getLooper();
-        Log.i(TAG, "Background thread started");
 
         // Инициализация RecyclerView
         mRecyclerView = findViewById(R.id.photo_recycler_view);
@@ -59,17 +53,44 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         setupAdapter();
 
         // Получение списка фотографий
-        updateItems();
+        //updateItems();
+
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL)
+                .enqueue(new Callback<List<Photo>>() {
+            @Override
+            public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
+                if (response.body() != null) {
+                    mPhotoList.addAll(response.body());
+                    Log.d(TAG, "Количество объектов: " + mPhotoList.size());
+
+                    setupAdapter();
+                }
+
+                Log.d(TAG, "Что-то не сработало...");
+            }
+
+            @Override
+            public void onFailure(Call<List<Photo>> call, Throwable t) {
+                Toast.makeText(PhotoGalleryActivity.this, "An error occurred during networking", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
+
+
+
+
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        // Отключения загрузчика миниатюр
+        /*// Отключения загрузчика миниатюр
         mThumbnailDownloader.clearQueue();
         mThumbnailDownloader.quit();
-        Log.i(TAG, "Background thread destroyed");
+        Log.i(TAG, "Background thread destroyed");*/
     }
 
     @Override
