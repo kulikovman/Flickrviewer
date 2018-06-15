@@ -29,7 +29,7 @@ public class FlickrFetchr {
             .appendQueryParameter("api_key", API_KEY)
             .appendQueryParameter("format", "json")
             .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("per_page", "50")
+            .appendQueryParameter("per_page", "100")
             .appendQueryParameter("page", "1")
             .appendQueryParameter("extras", "url_n")
             .build();

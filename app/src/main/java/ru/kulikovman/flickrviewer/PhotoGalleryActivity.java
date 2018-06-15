@@ -156,6 +156,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             if (mQuery == null) {
                 return new FlickrFetchr().fetchRecentPhotos();
             } else {
+                mItems.clear();
                 return new FlickrFetchr().searchPhotos(mQuery);
             }
         }
@@ -170,7 +171,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         protected void onPostExecute(List<GalleryItem> items) {
             mProgressDialog.dismiss();
             Log.d(TAG, "Список содержит: " + items.size() + " значений");
-            mItems = items;
+
+            // Добавляем новые фото в список
+            for (GalleryItem item : items) {
+                if (!mItems.contains(item)) {
+                    mItems.add(item);
+                }
+            }
+
             setupAdapter();
         }
     }

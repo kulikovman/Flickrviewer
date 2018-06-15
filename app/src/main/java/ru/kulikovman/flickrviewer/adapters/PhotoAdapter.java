@@ -58,7 +58,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
         public void bindGalleryItem(GalleryItem galleryItem) {
             Picasso.get()
                     .load(galleryItem.getUrl())
-                    .placeholder(R.drawable.ic_autorenew_24dp)
+                    //.placeholder(R.drawable.ic_autorenew_24dp)
                     .into(mItemImageView);
         }
     }
