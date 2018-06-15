@@ -21,7 +21,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
-import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
@@ -36,9 +35,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
-    private List<GalleryItem> mItems = new ArrayList<>();
-    private ThumbnailDownloader<PhotoAdapter.PhotoHolder> mThumbnailDownloader;
-
     private List<Photo> mPhotoList = new ArrayList<>();
 
     @Override
@@ -54,10 +50,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         setupAdapter();
 
         // Получение списка фотографий
-        //updateItems();
+        loadPhotoData();
+    }
 
-
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, 15, 1)
+    private void loadPhotoData() {
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, 15, 1, SIZE_URL)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
@@ -65,12 +62,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                             Log.d(TAG, "Запрос прошел успешно: " + response.code());
 
                             if (response.body() != null) {
-                                Log.d(TAG, "response.body() != null");
                                 // Добавляем новые фото в список
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     if (photo.getUrlN() != null) {
                                         mPhotoList.add(photo);
-                                        Log.d(TAG, "Добавили фото в список");
                                     }
                                 }
 
@@ -86,18 +81,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                         Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
                     }
                 });
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        /*// Отключения загрузчика миниатюр
-        mThumbnailDownloader.clearQueue();
-        mThumbnailDownloader.quit();
-        Log.i(TAG, "Background thread destroyed");*/
     }
 
     @Override
@@ -115,7 +98,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 QueryPreferences.setStoredQuery(PhotoGalleryActivity.this, s);
                 searchView.clearFocus();
                 searchView.onActionViewCollapsed();
-                updateItems();
+                //updateItems();
                 return true;
             }
 
@@ -142,22 +125,21 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         // Обрабатываем нажатие
         switch (item.getItemId()) {
             case R.id.menu_item_clear:
-                QueryPreferences.setStoredQuery(this, null);
-                updateItems();
+                //QueryPreferences.setStoredQuery(this, null);
+                //updateItems();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void updateItems() {
+    /*private void updateItems() {
         String query = QueryPreferences.getStoredQuery(this);
         new FetchItemsTask(query).execute();
-    }
+    }*/
 
     private void setupAdapter() {
         if (mPhotoAdapter == null) {
-            //mPhotoAdapter = new PhotoAdapter(this, mItems, mThumbnailDownloader);
             mPhotoAdapter = new PhotoAdapter(this, mPhotoList);
             mRecyclerView.setAdapter(mPhotoAdapter);
         } else {
@@ -166,7 +148,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+    /*private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         private ProgressDialog mProgressDialog;
         private String mQuery;
 
@@ -210,5 +192,5 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
             setupAdapter();
         }
-    }
+    }*/
 }
