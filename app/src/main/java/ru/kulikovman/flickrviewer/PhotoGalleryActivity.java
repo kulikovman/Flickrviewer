@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,16 +38,20 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private PhotoAdapter mPhotoAdapter;
     private List<Photo> mPhotoList = new ArrayList<>();
 
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
 
-        // Инициализация RecyclerView
+        // Инициализация вью элементов
         mRecyclerView = findViewById(R.id.photo_recycler_view);
+        mProgressBar = findViewById(R.id.progress_bar);
+
+        // Запуск RecyclerView
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.setHasFixedSize(true);
-
         setupAdapter();
 
         // Получение списка фотографий
@@ -54,10 +59,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     private void loadPhotoData() {
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, 15, 1, SIZE_URL)
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, 50, 1, SIZE_URL)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        mProgressBar.setVisibility(View.GONE);
+
                         if (response.isSuccessful()) {
                             Log.d(TAG, "Запрос прошел успешно: " + response.code());
 

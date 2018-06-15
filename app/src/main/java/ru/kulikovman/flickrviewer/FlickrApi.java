@@ -28,9 +28,11 @@ public interface FlickrApi {
 
     @GET("rest/")
     Call<FlickrResponse> getSearch(@Query("method") String method,
-                                   @Query("api_key") String apiKey,
+                                   @Query("api_key") String api_key,
                                    @Query("format") String format,
-                                   @Query("nojsoncallback") String set,
-                                   @Query("extras") String sizeUrl,
+                                   @Query("nojsoncallback") String nojsoncallback,
+                                   @Query("per_page") int per_page,
+                                   @Query("page") int page,
+                                   @Query("extras") String size_url,
                                    @Query("text") String searchTerm);
 }
