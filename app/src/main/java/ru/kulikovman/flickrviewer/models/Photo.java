@@ -1,125 +1,139 @@
 package ru.kulikovman.flickrviewer.models;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Photo {
-    private String mId;
-    private String mOwner;
-    private String mSecret;
-    private String mServer;
-    private Integer mFarm;
-    private String mTitle;
-    private Integer mIsPublic;
-    private Integer mIsFriend;
-    private Integer mIsFamily;
-    private String mUrlN;
-    private Integer mHeightN;
-    private String mWidthN;
-
-    private Map<String, Object> mAdditionalProperties = new HashMap<String, Object>();
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("owner")
+    @Expose
+    private String owner;
+    @SerializedName("secret")
+    @Expose
+    private String secret;
+    @SerializedName("server")
+    @Expose
+    private String server;
+    @SerializedName("farm")
+    @Expose
+    private Integer farm;
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("ispublic")
+    @Expose
+    private Integer ispublic;
+    @SerializedName("isfriend")
+    @Expose
+    private Integer isfriend;
+    @SerializedName("isfamily")
+    @Expose
+    private Integer isfamily;
+    @SerializedName("url_n")
+    @Expose
+    private String urlN;
+    @SerializedName("height_n")
+    @Expose
+    private String heightN;
+    @SerializedName("width_n")
+    @Expose
+    private Integer widthN;
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public void setId(String id) {
-        this.mId = id;
+        this.id = id;
     }
 
     public String getOwner() {
-        return mOwner;
+        return owner;
     }
 
     public void setOwner(String owner) {
-        this.mOwner = owner;
+        this.owner = owner;
     }
 
     public String getSecret() {
-        return mSecret;
+        return secret;
     }
 
     public void setSecret(String secret) {
-        this.mSecret = secret;
+        this.secret = secret;
     }
 
     public String getServer() {
-        return mServer;
+        return server;
     }
 
     public void setServer(String server) {
-        this.mServer = server;
+        this.server = server;
     }
 
     public Integer getFarm() {
-        return mFarm;
+        return farm;
     }
 
     public void setFarm(Integer farm) {
-        this.mFarm = farm;
+        this.farm = farm;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(String title) {
-        this.mTitle = title;
+        this.title = title;
     }
 
-    public Integer getIsPublic() {
-        return mIsPublic;
+    public Integer getIspublic() {
+        return ispublic;
     }
 
-    public void setIsPublic(Integer isPublic) {
-        this.mIsPublic = isPublic;
+    public void setIspublic(Integer ispublic) {
+        this.ispublic = ispublic;
     }
 
-    public Integer getIsFriend() {
-        return mIsFriend;
+    public Integer getIsfriend() {
+        return isfriend;
     }
 
-    public void setIsFriend(Integer isFriend) {
-        this.mIsFriend = isFriend;
+    public void setIsfriend(Integer isfriend) {
+        this.isfriend = isfriend;
     }
 
-    public Integer getIsFamily() {
-        return mIsFamily;
+    public Integer getIsfamily() {
+        return isfamily;
     }
 
-    public void setIsFamily(Integer isFamily) {
-        this.mIsFamily = isFamily;
+    public void setIsfamily(Integer isfamily) {
+        this.isfamily = isfamily;
     }
 
     public String getUrlN() {
-        return mUrlN;
+        return urlN;
     }
 
     public void setUrlN(String urlN) {
-        this.mUrlN = urlN;
+        this.urlN = urlN;
     }
 
-    public Integer getHeightN() {
-        return mHeightN;
+    public String getHeightN() {
+        return heightN;
     }
 
-    public void setHeightN(Integer heightN) {
-        this.mHeightN = heightN;
+    public void setHeightN(String heightN) {
+        this.heightN = heightN;
     }
 
-    public String getWidthN() {
-        return mWidthN;
+    public Integer getWidthN() {
+        return widthN;
     }
 
-    public void setWidthN(String widthN) {
-        this.mWidthN = widthN;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.mAdditionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.mAdditionalProperties.put(name, value);
+    public void setWidthN(Integer widthN) {
+        this.widthN = widthN;
     }
 }

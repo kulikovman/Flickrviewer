@@ -1,14 +1,11 @@
 package ru.kulikovman.flickrviewer;
 
-import android.net.Uri;
-
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.PhotosResponse;
+import ru.kulikovman.flickrviewer.models.FlickrResponse;
 
 public interface FlickrApi {
 
@@ -23,7 +20,7 @@ public interface FlickrApi {
 
 
     @GET("rest/")
-    Call<PhotosResponse> getRecent(@Query("method") String method,
+    Call<FlickrResponse> getRecent(@Query("method") String method,
                                    @Query("api_key") String apiKey,
                                    @Query("format") String format,
                                    @Query("nojsoncallback") String set,
@@ -32,7 +29,7 @@ public interface FlickrApi {
                                    @Query("page") int page);
 
     @GET("/rest")
-    Call<List<PhotosResponse>> getSearch(@Query("method") String method,
+    Call<List<FlickrResponse>> getSearch(@Query("method") String method,
                                          @Query("api_key") String apiKey,
                                          @Query("format") String format,
                                          @Query("nojsoncallback") String set,

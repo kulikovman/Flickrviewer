@@ -1,63 +1,64 @@
 package ru.kulikovman.flickrviewer.models;
 
-import java.util.HashMap;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
-import java.util.Map;
 
 public class Photos {
-    private Integer mPage;
-    private Integer mPages;
-    private Integer mPerPage;
-    private Integer mTotal;
-    private List<Photo> mPhoto = null;
-
-    private Map<String, Object> mAdditionalProperties = new HashMap<String, Object>();
+    @SerializedName("page")
+    @Expose
+    private Integer page;
+    @SerializedName("pages")
+    @Expose
+    private Integer pages;
+    @SerializedName("perpage")
+    @Expose
+    private Integer perpage;
+    @SerializedName("total")
+    @Expose
+    private Integer total;
+    @SerializedName("photo")
+    @Expose
+    private List<Photo> photo = null;
 
     public Integer getPage() {
-        return mPage;
+        return page;
     }
 
     public void setPage(Integer page) {
-        this.mPage = page;
+        this.page = page;
     }
 
     public Integer getPages() {
-        return mPages;
+        return pages;
     }
 
     public void setPages(Integer pages) {
-        this.mPages = pages;
+        this.pages = pages;
     }
 
-    public Integer getPerPage() {
-        return mPerPage;
+    public Integer getPerpage() {
+        return perpage;
     }
 
-    public void setPerPage(Integer perPage) {
-        this.mPerPage = perPage;
+    public void setPerpage(Integer perpage) {
+        this.perpage = perpage;
     }
 
     public Integer getTotal() {
-        return mTotal;
+        return total;
     }
 
     public void setTotal(Integer total) {
-        this.mTotal = total;
+        this.total = total;
     }
 
     public List<Photo> getPhoto() {
-        return mPhoto;
+        return photo;
     }
 
     public void setPhoto(List<Photo> photo) {
-        this.mPhoto = photo;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.mAdditionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.mAdditionalProperties.put(name, value);
+        this.photo = photo;
     }
 }

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
+import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.PhotosResponse;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
@@ -59,9 +58,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
 
         App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, 15, 1)
-                .enqueue(new Callback<PhotosResponse>() {
+                .enqueue(new Callback<FlickrResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<PhotosResponse> call, @NonNull Response<PhotosResponse> response) {
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
                         if (response.isSuccessful()) {
                             //Log.d(TAG, "response " + response.body().getPhotos().getPhoto().size());
                             Log.d(TAG, "Запрос прошел успешно: " + response.code());
@@ -69,7 +68,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                             Log.d(TAG, "Неудача: " + response.code());
                         }
 
-                /*List<PhotosResponse> photos = response.body();
+                /*List<FlickrResponse> photos = response.body();
 
                 if (photos == null) {
                     Log.d(TAG, "photosResponses == null");
@@ -88,7 +87,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<PhotosResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
                         Log.d(TAG, "An error occurred during networking");
                         Log.d(TAG, "Описание ошибки: " + t.getMessage());
                         Log.d(TAG, "Описание ошибки: " + t.toString());
