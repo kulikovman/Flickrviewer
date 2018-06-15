@@ -2,6 +2,7 @@ package ru.kulikovman.flickrviewer;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,16 +23,17 @@ import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotosResponse;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
 
-    private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private static final String RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
-    private static final String SIZE_URL = "url_n";
+    private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private static final String FORMAT = "json";
     private static final String NOJSONCALLBACK = "1";
+    private static final String SIZE_URL = "url_n";
 
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
@@ -55,30 +57,43 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         // Получение списка фотографий
         //updateItems();
 
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL)
-                .enqueue(new Callback<List<Photo>>() {
-            @Override
-            public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
-                if (response.body() != null) {
-                    mPhotoList.addAll(response.body());
-                    Log.d(TAG, "Количество объектов: " + mPhotoList.size());
+
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, 15, 1)
+                .enqueue(new Callback<PhotosResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<PhotosResponse> call, @NonNull Response<PhotosResponse> response) {
+                        if (response.isSuccessful()) {
+                            //Log.d(TAG, "response " + response.body().getPhotos().getPhoto().size());
+                            Log.d(TAG, "Запрос прошел успешно: " + response.code());
+                        } else {
+                            Log.d(TAG, "Неудача: " + response.code());
+                        }
+
+                /*List<PhotosResponse> photos = response.body();
+
+                if (photos == null) {
+                    Log.d(TAG, "photosResponses == null");
+                } else {
+                    Log.d(TAG, "Количество объектов: " + photos.size());
+                }*/
+
+                /*if (response.body() != null) {
+
+                    //mPhotoList.addAll(photosResponses);
 
                     setupAdapter();
-                }
+                }*/
 
-                Log.d(TAG, "Что-то не сработало...");
-            }
+                        //Log.d(TAG, "Что-то не сработало...");
+                    }
 
-            @Override
-            public void onFailure(Call<List<Photo>> call, Throwable t) {
-                Toast.makeText(PhotoGalleryActivity.this, "An error occurred during networking", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
-
-
-
-
+                    @Override
+                    public void onFailure(@NonNull Call<PhotosResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "An error occurred during networking");
+                        Log.d(TAG, "Описание ошибки: " + t.getMessage());
+                        Log.d(TAG, "Описание ошибки: " + t.toString());
+                    }
+                });
 
 
     }

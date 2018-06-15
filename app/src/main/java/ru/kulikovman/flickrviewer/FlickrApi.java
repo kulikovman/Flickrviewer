@@ -8,19 +8,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotosResponse;
 
 public interface FlickrApi {
-
-    /*static final Uri ENDPOINT = Uri
-            .parse("https://api.flickr.com/services/rest/")
-            .buildUpon()
-            .appendQueryParameter("api_key", "dfgdfhdfh")
-            .appendQueryParameter("format", "json")
-            .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("per_page", "100")
-            .appendQueryParameter("page", "1")
-            .appendQueryParameter("extras", "url_n")
-            .build();*/
 
     // https://api.flickr.com/services/rest/
     // ?method=flickr.photos.getRecent
@@ -32,18 +22,20 @@ public interface FlickrApi {
     // &extras=url_n
 
 
-    @GET("/rest")
-    Call<List<Photo>> getRecent(@Query("method") String method,
-                                @Query("api_key") String apiKey,
-                                @Query("format") String format,
-                                @Query("nojsoncallback") String set,
-                                @Query("extras") String sizeUrl);
+    @GET("rest/")
+    Call<PhotosResponse> getRecent(@Query("method") String method,
+                                   @Query("api_key") String apiKey,
+                                   @Query("format") String format,
+                                   @Query("nojsoncallback") String set,
+                                   @Query("extras") String sizeUrl,
+                                   @Query("per_page") int perPage,
+                                   @Query("page") int page);
 
     @GET("/rest")
-    Call<List<Photo>> getSearch(@Query("method") String method,
-                                @Query("api_key") String apiKey,
-                                @Query("format") String format,
-                                @Query("nojsoncallback") String set,
-                                @Query("extras") String sizeUrl,
-                                @Query("text") String searchTerm);
+    Call<List<PhotosResponse>> getSearch(@Query("method") String method,
+                                         @Query("api_key") String apiKey,
+                                         @Query("format") String format,
+                                         @Query("nojsoncallback") String set,
+                                         @Query("extras") String sizeUrl,
+                                         @Query("text") String searchTerm);
 }
