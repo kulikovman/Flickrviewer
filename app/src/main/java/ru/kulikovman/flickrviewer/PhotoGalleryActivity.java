@@ -29,6 +29,7 @@ import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
@@ -44,6 +45,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private List<Photo> mPhotoList = new ArrayList<>();
+    private List<PhotoPreview> mPhotoPreviews = new ArrayList<>();
 
     private ProgressBar mProgressBar;
 
@@ -94,11 +96,17 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
                         if (response.isSuccessful()) {
                             Log.d(TAG, "Запрос прошел успешно: " + response.code());
-
                             if (response.body() != null) {
                                 // Добавляем новые фото в список
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     if (photo.getUrlN() != null) {
+
+
+
+
+
+
+
                                         mPhotoList.add(photo);
                                     }
                                 }

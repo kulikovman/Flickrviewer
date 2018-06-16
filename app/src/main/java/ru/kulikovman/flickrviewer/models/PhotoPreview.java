@@ -1,26 +1,28 @@
 package ru.kulikovman.flickrviewer.models;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
-public class PhotoRealm extends RealmObject {
-    private String mId;
+public class PhotoPreview extends RealmObject {
+    @PrimaryKey
+    private long mId;
     private String mTitle;
     private String mUrl;
 
-    public PhotoRealm() {
+    public PhotoPreview() {
     }
 
-    public PhotoRealm(String id, String title, String url) {
-        this.mId = id;
-        this.mTitle = title;
-        this.mUrl = url;
+    public PhotoPreview(long id, String title, String url) {
+        mId = id;
+        mTitle = title;
+        mUrl = url;
     }
 
-    public String getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         mId = id;
     }
 
