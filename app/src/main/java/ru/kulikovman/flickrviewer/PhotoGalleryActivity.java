@@ -52,6 +52,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
 
     private int mPage = 1;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +81,45 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     private void setUpPhotoRecyclerView() {
-        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(this, getNumberOfColumns()));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getNumberOfColumns());
+        mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
         mPhotoRecyclerView.setHasFixedSize(true);
         mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoPreviewList());
         mPhotoRecyclerView.setAdapter(mPhotoAdapter);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                mFlickrFetchr.loadRecentPhoto(page);
+                Log.d(TAG, "Загрузка дополнительных фотографий: " + page);
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        mPhotoRecyclerView.addOnScrollListener(scrollListener);
+
+
+
+
+        /*RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                GridLayoutManager layoutManager = ((GridLayoutManager) recyclerView.getLayoutManager());
+                int totalItemCount = layoutManager.getItemCount();// Сколько всего элементов
+                int lastVisibleItems = layoutManager.findLastVisibleItemPosition();// Позиция последнего видимого элемента
+
+                if (totalItemCount - 30 < lastVisibleItems) {
+                    mPage = mPage + 1;
+                    mFlickrFetchr.loadRecentPhoto(mPage);
+                    Log.d(TAG, "Загрузка дополнительных фотографий: " + mPage);
+                }
+            }
+        };
+
+        mPhotoRecyclerView.setOnScrollListener(scrollListener);*/
     }
 
     private void loadPhotoData() {
@@ -102,7 +138,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     // Если есть ссылка на миниатюру
                                     if (photo.getUrlN() != null) {
-                                        PhotoPreview preview = new PhotoPreview(Long.parseLong(photo.getId()));
+                                        PhotoPreview preview = new PhotoPreview(photo.getId());
                                         preview.setTitle(photo.getTitle());
                                         preview.setUrl(photo.getUrlN());
 

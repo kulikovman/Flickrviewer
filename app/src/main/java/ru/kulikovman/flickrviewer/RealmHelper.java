@@ -23,16 +23,24 @@ public class RealmHelper {
         return mRealm.isEmpty();
     }
 
+    public boolean isExistUrl(String url) {
+        PhotoPreview photoPreview = mRealm.where(PhotoPreview.class)
+                .equalTo(PhotoPreview.URL, url)
+                .findFirst();
+
+        return photoPreview != null;
+    }
+
     OrderedRealmCollection<PhotoPreview> getPhotoPreviewList() {
         return mRealm.where(PhotoPreview.class)
                 .findAll();
     }
 
-    PhotoPreview getPhotoPreviewById(long previewId) {
+    /*PhotoPreview getPhotoPreviewById(long previewId) {
         return mRealm.where(PhotoPreview.class)
                 .equalTo(PhotoPreview.ID, previewId)
                 .findFirst();
-    }
+    }*/
 
 
 

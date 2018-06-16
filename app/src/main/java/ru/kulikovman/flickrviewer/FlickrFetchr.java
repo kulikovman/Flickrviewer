@@ -3,7 +3,6 @@ package ru.kulikovman.flickrviewer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +35,7 @@ public class FlickrFetchr {
     private static final String FORMAT = "json";
     private static final int NOJSONCALLBACK = 1;
     private static final String SIZE_URL = "url_n";
-    private static final int PER_PAGE = 50;
+    private static final int PER_PAGE = 60;
 
 
 
@@ -59,6 +58,7 @@ public class FlickrFetchr {
 
 
     private static FlickrFetchr sFlickrFetchr;
+    private RealmHelper mRealmHelper;
     private Realm mRealm;
 
     public static FlickrFetchr get() {
@@ -70,6 +70,7 @@ public class FlickrFetchr {
 
     FlickrFetchr() {
         mRealm = Realm.getDefaultInstance();
+        mRealmHelper = RealmHelper.get();
     }
 
     public void loadRecentPhoto(int page) {
@@ -86,14 +87,18 @@ public class FlickrFetchr {
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     // Если есть ссылка на миниатюру
                                     if (photo.getUrlN() != null) {
-                                        PhotoPreview preview = new PhotoPreview(Long.parseLong(photo.getId()));
+                                        PhotoPreview preview = new PhotoPreview(photo.getId());
                                         preview.setTitle(photo.getTitle());
                                         preview.setUrl(photo.getUrlN());
 
                                         // Сохраняем объект в базу
-                                        mRealm.beginTransaction();
-                                        mRealm.insert(preview);
-                                        mRealm.commitTransaction();
+                                        if (!mRealmHelper.isExistUrl(preview.getUrl())) {
+                                            mRealm.beginTransaction();
+                                            mRealm.insert(preview);
+                                            mRealm.commitTransaction();
+                                        } else {
+                                            Log.d(TAG, "Такая картинка уже есть в базе: " + preview.getUrl());
+                                        }
 
                                         // Добавляем в старый список
                                         //mPhotoList.add(photo);

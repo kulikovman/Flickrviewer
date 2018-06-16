@@ -8,31 +8,31 @@ public class PhotoPreview extends RealmObject {
     public static final String TITLE = "mTitle";
     public static final String URL = "mUrl";
 
-    @PrimaryKey
-    private long mId;
+    //@PrimaryKey
+    private String mId;
     private String mTitle;
     private String mUrl;
 
-    public PhotoPreview(long id, String title, String url) {
+    public PhotoPreview(String id, String title, String url) {
         mId = id;
         mTitle = title;
         mUrl = url;
     }
 
-    public PhotoPreview(long id) {
+    public PhotoPreview(String id) {
         mId = id;
     }
 
     public PhotoPreview() {
     }
 
-    public long getId() {
+    /*public long getId() {
         return mId;
     }
 
     public void setId(long id) {
         mId = id;
-    }
+    }*/
 
     public String getTitle() {
         return mTitle;
