@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,18 +74,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         loadPhotoData();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("log", "Запущен onResume в PhotoGalleryActivity");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("log", "Запущен onPause в PhotoGalleryActivity");
-    }
-
     private void loadPhotoData() {
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -99,17 +88,24 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                             if (response.body() != null) {
                                 // Добавляем новые фото в список
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
+                                    // Если есть ссылка на миниатюру
                                     if (photo.getUrlN() != null) {
+                                        PhotoPreview preview = new PhotoPreview(Long.parseLong(photo.getId()));
+                                        preview.setTitle(photo.getTitle());
+                                        preview.setUrl(photo.getUrlN());
 
+                                        // Сохраняем объект в базу
+                                        mRealm.beginTransaction();
+                                        mRealm.insert(preview);
+                                        mRealm.commitTransaction();
 
-
-
-
-
-
+                                        // Добавляем в старый список
                                         mPhotoList.add(photo);
                                     }
                                 }
+
+                                RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
+                                Log.d(TAG, "Объектов в базе: " + previews.size());
 
                                 setupAdapter();
                             }

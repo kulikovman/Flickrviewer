@@ -4,18 +4,26 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class PhotoPreview extends RealmObject {
+    public static final String ID = "mId";
+    public static final String TITLE = "mTitle";
+    public static final String URL = "mUrl";
+
     @PrimaryKey
     private long mId;
     private String mTitle;
     private String mUrl;
 
-    public PhotoPreview() {
-    }
-
     public PhotoPreview(long id, String title, String url) {
         mId = id;
         mTitle = title;
         mUrl = url;
+    }
+
+    public PhotoPreview(long id) {
+        mId = id;
+    }
+
+    public PhotoPreview() {
     }
 
     public long getId() {
