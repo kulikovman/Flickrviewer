@@ -21,7 +21,7 @@ public interface FlickrApi {
     Call<FlickrResponse> getRecent(@Query("method") String method,
                                    @Query("api_key") String api_key,
                                    @Query("format") String format,
-                                   @Query("nojsoncallback") String nojsoncallback,
+                                   @Query("nojsoncallback") int nojsoncallback,
                                    @Query("per_page") int per_page,
                                    @Query("page") int page,
                                    @Query("extras") String size_url);
@@ -30,7 +30,7 @@ public interface FlickrApi {
     Call<FlickrResponse> getSearch(@Query("method") String method,
                                    @Query("api_key") String api_key,
                                    @Query("format") String format,
-                                   @Query("nojsoncallback") String nojsoncallback,
+                                   @Query("nojsoncallback") int nojsoncallback,
                                    @Query("per_page") int per_page,
                                    @Query("page") int page,
                                    @Query("extras") String size_url,

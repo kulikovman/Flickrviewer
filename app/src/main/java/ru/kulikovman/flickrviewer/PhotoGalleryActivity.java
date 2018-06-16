@@ -1,9 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Point;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,39 +37,53 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String SEARCH_METHOD = "flickr.photos.search";
     private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private static final String FORMAT = "json";
-    private static final String NOJSONCALLBACK = "1";
+    private static final int NOJSONCALLBACK = 1;
     private static final String SIZE_URL = "url_n";
 
     private Realm mRealm;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private List<Photo> mPhotoList = new ArrayList<>();
     private List<PhotoPreview> mPhotoPreviews = new ArrayList<>();
 
+    private RealmHelper mRealmHelper;
+    private FlickrFetchr mFlickrFetchr;
+
     private ProgressBar mProgressBar;
+
+    private int mPage = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
 
-        Log.d("log", "Запущен onCreate в PhotoGalleryActivity");
+        Log.d(TAG, "Запущен onCreate в PhotoGalleryActivity");
 
         // Инициализация вью элементов
-        mRecyclerView = findViewById(R.id.photo_recycler_view);
+        mPhotoRecyclerView = findViewById(R.id.photo_recycler_view);
         mProgressBar = findViewById(R.id.progress_bar);
 
-        // Инициализируем базу данных
-        Realm.init(this);
-        mRealm = Realm.getDefaultInstance();
+        // Получаем важные штуки
+        mRealmHelper = RealmHelper.get();
+        mFlickrFetchr = FlickrFetchr.get();
 
-        // Запуск RecyclerView
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, getNumberOfColumns()));
-        mRecyclerView.setHasFixedSize(true);
-        setupAdapter();
+        // Запуск списка
+        setUpPhotoRecyclerView();
 
-        // Получение списка фотографий
-        loadPhotoData();
+        // Если база пустая, то подгружаем новые фото
+        if (mRealmHelper.baseIsEmpty()) {
+            Log.d(TAG, "База пустая, начинается загрузка...");
+            //mProgressBar.setVisibility(View.VISIBLE);
+            mFlickrFetchr.loadRecentPhoto(1);
+        }
+    }
+
+    private void setUpPhotoRecyclerView() {
+        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(this, getNumberOfColumns()));
+        mPhotoRecyclerView.setHasFixedSize(true);
+        mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoPreviewList());
+        mPhotoRecyclerView.setAdapter(mPhotoAdapter);
     }
 
     private void loadPhotoData() {
@@ -107,7 +119,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                                 RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
                                 Log.d(TAG, "Объектов в базе: " + previews.size());
 
-                                setupAdapter();
+                                setUpPhotoRecyclerView();
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
@@ -168,16 +180,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void setupAdapter() {
-        if (mPhotoAdapter == null) {
-            mPhotoAdapter = new PhotoAdapter(this, mPhotoList);
-            mRecyclerView.setAdapter(mPhotoAdapter);
-        } else {
-            mPhotoAdapter.setPhotos(mPhotoList);
-            mPhotoAdapter.notifyDataSetChanged();
         }
     }
 
@@ -245,7 +247,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 }
             }
 
-            setupAdapter();
+            setUpPhotoRecyclerView();
         }
     }*/
 }

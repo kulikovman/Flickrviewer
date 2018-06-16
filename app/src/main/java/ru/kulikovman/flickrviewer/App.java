@@ -11,12 +11,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
     private static FlickrApi mFlickrApi;
-    private Retrofit mRetrofit;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("log", "Запущен onCreate в App");
+
+        // Инициализируем базу данных
+        Realm.init(this);
 
         // Запускаем логирование трафика
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -27,13 +29,13 @@ public class App extends Application {
                 .build();
 
         // Инициализируем Retrofit
-        mRetrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.flickr.com/services/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
 
-        mFlickrApi = mRetrofit.create(FlickrApi.class);
+        mFlickrApi = retrofit.create(FlickrApi.class);
     }
 
     public static FlickrApi getApi() {

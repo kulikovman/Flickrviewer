@@ -10,20 +10,25 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmRecyclerViewAdapter;
 import ru.kulikovman.flickrviewer.R;
-import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder> {
+public class PhotoAdapter extends RealmRecyclerViewAdapter<PhotoPreview, PhotoAdapter.PhotoHolder> {
     private static final String TAG = "PhotoAdapter";
 
     private Context mContext;
-    private List<Photo> mPhotos;
+    private OrderedRealmCollection<PhotoPreview> mPhotoPreviews;
 
-    public PhotoAdapter(Context context, List<Photo> photos) {
+    public PhotoAdapter(Context context, OrderedRealmCollection<PhotoPreview> photoPreviews) {
+        super(photoPreviews, true);
+        // Only set this if the model class has a primary key that is also a integer or long.
+        // In that case, {@code getItemId(int)} must also be overridden to return the key.
+        setHasStableIds(true);
+
         mContext = context;
-        mPhotos = photos;
+        mPhotoPreviews = photoPreviews;
     }
 
     public class PhotoHolder extends RecyclerView.ViewHolder {
@@ -34,10 +39,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
             mItemImageView = itemView.findViewById(R.id.image_container);
         }
 
-        public void bindPhoto(Photo photo) {
+        public void bindPhoto(PhotoPreview photoPreview) {
             Picasso.get()
-                    .load(photo.getUrlN())
-                    //.placeholder(R.drawable.ic_autorenew_24dp)
+                    .load(photoPreview.getUrl())
                     .into(mItemImageView);
         }
     }
@@ -53,16 +57,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoHolder>
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
-        Photo photo = mPhotos.get(position);
-        photoHolder.bindPhoto(photo);
+        PhotoPreview photoPreview = mPhotoPreviews.get(position);
+        photoHolder.bindPhoto(photoPreview);
     }
 
     @Override
     public int getItemCount() {
-        return  mPhotos.size();
-    }
-
-    public void setPhotos(List<Photo> photos) {
-        mPhotos = photos;
+        return  mPhotoPreviews.size();
     }
 }

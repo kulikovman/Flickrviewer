@@ -1,7 +1,9 @@
 package ru.kulikovman.flickrviewer;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,14 +17,35 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
+import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
 public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr";
+
     private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
+    private static final String RECENTS_METHOD = "flickr.photos.getRecent";
+    private static final String SEARCH_METHOD = "flickr.photos.search";
+    private static final String FORMAT = "json";
+    private static final int NOJSONCALLBACK = 1;
+    private static final String SIZE_URL = "url_n";
+    private static final int PER_PAGE = 50;
+
+
+
+
+
+
+
 
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
-    private static final String SEARCH_METHOD = "flickr.photos.search";
     private static final Uri ENDPOINT = Uri
             .parse("https://api.flickr.com/services/rest/")
             .buildUpon()
@@ -33,6 +56,72 @@ public class FlickrFetchr {
             .appendQueryParameter("page", "1")
             .appendQueryParameter("extras", "url_n")
             .build();
+
+
+    private static FlickrFetchr sFlickrFetchr;
+    private Realm mRealm;
+
+    public static FlickrFetchr get() {
+        if (sFlickrFetchr == null) {
+            sFlickrFetchr = new FlickrFetchr();
+        }
+        return sFlickrFetchr;
+    }
+
+    FlickrFetchr() {
+        mRealm = Realm.getDefaultInstance();
+    }
+
+    public void loadRecentPhoto(int page) {
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, page, SIZE_URL)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        //mProgressBar.setVisibility(View.GONE);
+
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, "Запрос прошел успешно: " + response.code());
+                            if (response.body() != null) {
+                                // Добавляем новые фото в список
+                                for (Photo photo : response.body().getPhotos().getPhoto()) {
+                                    // Если есть ссылка на миниатюру
+                                    if (photo.getUrlN() != null) {
+                                        PhotoPreview preview = new PhotoPreview(Long.parseLong(photo.getId()));
+                                        preview.setTitle(photo.getTitle());
+                                        preview.setUrl(photo.getUrlN());
+
+                                        // Сохраняем объект в базу
+                                        mRealm.beginTransaction();
+                                        mRealm.insert(preview);
+                                        mRealm.commitTransaction();
+
+                                        // Добавляем в старый список
+                                        //mPhotoList.add(photo);
+                                    }
+                                }
+
+                                RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
+                                Log.d(TAG, "Объектов в базе: " + previews.size());
+
+                                //setUpPhotoRecyclerView();
+                            }
+                        } else {
+                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
+                    }
+                });
+    }
+
+
+
+
+
+
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -118,5 +207,6 @@ public class FlickrFetchr {
             items.add(item);
         }
     }
+
 
 }
