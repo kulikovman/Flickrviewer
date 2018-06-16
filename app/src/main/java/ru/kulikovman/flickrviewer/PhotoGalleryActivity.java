@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,6 +40,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String NOJSONCALLBACK = "1";
     private static final String SIZE_URL = "url_n";
 
+    private Realm mRealm;
     private RecyclerView mRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private List<Photo> mPhotoList = new ArrayList<>();
@@ -55,6 +57,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         // Инициализация вью элементов
         mRecyclerView = findViewById(R.id.photo_recycler_view);
         mProgressBar = findViewById(R.id.progress_bar);
+
+        // Инициализируем базу данных
+        Realm.init(this);
+        mRealm = Realm.getDefaultInstance();
 
         // Запуск RecyclerView
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, getNumberOfColumns()));
