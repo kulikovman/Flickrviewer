@@ -1,6 +1,8 @@
 package ru.kulikovman.flickrviewer;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +11,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -45,17 +50,31 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
 
+        Log.d("log", "Запущен onCreate в PhotoGalleryActivity");
+
         // Инициализация вью элементов
         mRecyclerView = findViewById(R.id.photo_recycler_view);
         mProgressBar = findViewById(R.id.progress_bar);
 
         // Запуск RecyclerView
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, getNumberOfColumns()));
         mRecyclerView.setHasFixedSize(true);
         setupAdapter();
 
         // Получение списка фотографий
         loadPhotoData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("log", "Запущен onResume в PhotoGalleryActivity");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("log", "Запущен onPause в PhotoGalleryActivity");
     }
 
     private void loadPhotoData() {
@@ -142,11 +161,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
     }
 
-    /*private void updateItems() {
-        String query = QueryPreferences.getStoredQuery(this);
-        new FetchItemsTask(query).execute();
-    }*/
-
     private void setupAdapter() {
         if (mPhotoAdapter == null) {
             mPhotoAdapter = new PhotoAdapter(this, mPhotoList);
@@ -155,6 +169,28 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             mPhotoAdapter.setPhotos(mPhotoList);
             mPhotoAdapter.notifyDataSetChanged();
         }
+    }
+
+    public int getNumberOfColumns() {
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
+        int width = 0;
+        int height = 0;
+        if (wm != null) {
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            width = size.x;
+            height = size.y;
+        }
+
+        int numberOfColumns = width / convertDpToPx(this, 120);
+        return numberOfColumns != 0 ? numberOfColumns : 3;
+    }
+
+    public static int convertDpToPx(Context context, int valueInDp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
+                context.getResources().getDisplayMetrics());
     }
 
     /*private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {

@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.app.Application;
+import android.util.Log;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -14,6 +15,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Log.d("log", "Запущен onCreate в App");
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
