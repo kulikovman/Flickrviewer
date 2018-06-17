@@ -25,6 +25,7 @@ import retrofit2.Response;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.Photos;
 
 public class FlickrFetcher {
     private static final String TAG = "FlickrFetcher";
@@ -41,6 +42,7 @@ public class FlickrFetcher {
     private RealmHelper mRealmHelper;
     private Realm mRealm;
     private Context mContext;
+    private List<Photo> mPhotos;
 
     public static FlickrFetcher get(Context context) {
         if (sFlickrFetcher == null) {
@@ -49,7 +51,7 @@ public class FlickrFetcher {
         return sFlickrFetcher;
     }
 
-    FlickrFetcher(Context context) {
+    private FlickrFetcher(Context context) {
         mContext = context;
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
@@ -79,24 +81,34 @@ public class FlickrFetcher {
         }
     }
 
-    public void getRecentPhoto(int page) {
+    private void getRecentPhoto(int page) {
         App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                // Добавляем новые фото в список
-                                for (Photo photo : response.body().getPhotos().getPhoto()) {
-                                    // Если есть ссылка на миниатюру
-                                    if (photo.getUrlN() != null) {
-                                        // Если такого фото еще нет, то добавляем в базу
-                                        if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
-                                            mRealm.beginTransaction();
-                                            mRealm.insert(photo);
-                                            mRealm.commitTransaction();
-                                        } else {
-                                            Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                                FlickrResponse flickrResponse = response.body();
+                                if (flickrResponse != null) {
+                                    Photos photos = flickrResponse.getPhotos();
+                                    if (photos != null) {
+                                        mPhotos = photos.getPhoto();
+                                    }
+                                }
+
+                                if (mPhotos != null) {
+                                    // Добавляем новые фото в список
+                                    for (Photo photo : mPhotos) {
+                                        // Если есть ссылка на миниатюру
+                                        if (photo.getUrlN() != null) {
+                                            // Если такого фото еще нет, то добавляем в базу
+                                            if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
+                                                mRealm.beginTransaction();
+                                                mRealm.insert(photo);
+                                                mRealm.commitTransaction();
+                                            } else {
+                                                Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                                            }
                                         }
                                     }
                                 }
@@ -121,17 +133,27 @@ public class FlickrFetcher {
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                // Добавляем новые фото в список
-                                for (Photo photo : response.body().getPhotos().getPhoto()) {
-                                    // Если есть ссылка на миниатюру
-                                    if (photo.getUrlN() != null) {
-                                        // Если такого фото еще нет, то добавляем в базу
-                                        if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
-                                            mRealm.beginTransaction();
-                                            mRealm.insert(photo);
-                                            mRealm.commitTransaction();
-                                        } else {
-                                            Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                                FlickrResponse flickrResponse = response.body();
+                                if (flickrResponse != null) {
+                                    Photos photos = flickrResponse.getPhotos();
+                                    if (photos != null) {
+                                        mPhotos = photos.getPhoto();
+                                    }
+                                }
+
+                                if (mPhotos != null) {
+                                    // Добавляем новые фото в список
+                                    for (Photo photo : mPhotos) {
+                                        // Если есть ссылка на миниатюру
+                                        if (photo.getUrlN() != null) {
+                                            // Если такого фото еще нет, то добавляем в базу
+                                            if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
+                                                mRealm.beginTransaction();
+                                                mRealm.insert(photo);
+                                                mRealm.commitTransaction();
+                                            } else {
+                                                Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                                            }
                                         }
                                     }
                                 }

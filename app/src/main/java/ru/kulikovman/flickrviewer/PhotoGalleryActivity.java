@@ -32,7 +32,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private String mSearchQuery = "";
-    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,31 +48,16 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
         mFlickrFetcher = FlickrFetcher.get(this);
-        mSharedPref = getPreferences(Context.MODE_PRIVATE);
 
         // Если база пустая
         if (mRealm.isEmpty()) {
             // Загружаем новые фото
             mFlickrFetcher.loadPhoto();
-        } else {
-            // Восстанавливаем значение поискового запроса
-            mSearchQuery = mSharedPref.getString(getString(R.string.search_query), "");
         }
 
         // Запуск списка фотографий
         setupPhotoRecyclerView();
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Сохраняем поисковый запрос
-        mSharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(getString(R.string.search_query), mSearchQuery);
-        editor.apply();
     }
 
     @Override
