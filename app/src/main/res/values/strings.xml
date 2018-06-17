@@ -4,4 +4,8 @@
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
 
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 </resources>

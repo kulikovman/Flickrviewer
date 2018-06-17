@@ -69,7 +69,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getNumberOfColumns());
         mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
         mPhotoRecyclerView.setHasFixedSize(true);
-        mPhotoAdapter = new PhotoAdapter(mRealmHelper.getPhotoList());
+        mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoList());
         mPhotoRecyclerView.setAdapter(mPhotoAdapter);
 
         mScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {

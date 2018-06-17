@@ -7,7 +7,7 @@ import ru.kulikovman.flickrviewer.models.FlickrResponse;
 
 public interface FlickrApi {
 
-    // Пример Flickr запроса:
+    // Пример Flickr запроса миниатюры:
     // https://api.flickr.com/services/rest/?method=flickr.photos.search
     // &api_key=92cc75b96a9f82a32bc29eb21a254fe4
     // &format=json&nojsoncallback=1&per_page=60&page=1&extras=url_n&text=girl
@@ -30,4 +30,7 @@ public interface FlickrApi {
                                    @Query("extras") String size_url,
                                    @Query("page") int page,
                                    @Query("text") String searchQuery);
+
+    // Пример запроса оригинала по данным из миниатюры
+    // https://farm1.staticflickr.com/2/1418878_1e92283336_m.jpg
 }
