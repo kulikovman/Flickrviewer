@@ -47,11 +47,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private List<PhotoPreview> mPhotoPreviews = new ArrayList<>();
 
     private RealmHelper mRealmHelper;
-    private FlickrFetchr mFlickrFetchr;
+    private FlickrReceiver mFlickrReceiver;
 
     private ProgressBar mProgressBar;
-
-    private int mPage = 1;
     private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
@@ -67,7 +65,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         // Получаем важные штуки
         mRealmHelper = RealmHelper.get();
-        mFlickrFetchr = FlickrFetchr.get();
+        mFlickrReceiver = FlickrReceiver.get();
 
         // Запуск списка
         setUpPhotoRecyclerView();
@@ -76,7 +74,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         if (mRealmHelper.baseIsEmpty()) {
             Log.d(TAG, "База пустая, начинается загрузка...");
             //mProgressBar.setVisibility(View.VISIBLE);
-            mFlickrFetchr.loadRecentPhoto(1);
+            mFlickrReceiver.loadRecentPhoto(1);
         }
     }
 
@@ -90,13 +88,12 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                mFlickrFetchr.loadRecentPhoto(page);
-                Log.d(TAG, "Загрузка дополнительных фотографий: " + page);
+                // Подгрузка новых данных
+                mFlickrReceiver.loadRecentPhoto(page);
+                Log.d(TAG, "Загрузка фотографий: " + page);
             }
         };
-        // Adds the scroll listener to RecyclerView
+
         mPhotoRecyclerView.addOnScrollListener(scrollListener);
 
 
@@ -113,7 +110,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
                 if (totalItemCount - 30 < lastVisibleItems) {
                     mPage = mPage + 1;
-                    mFlickrFetchr.loadRecentPhoto(mPage);
+                    mFlickrReceiver.loadRecentPhoto(mPage);
                     Log.d(TAG, "Загрузка дополнительных фотографий: " + mPage);
                 }
             }
@@ -122,7 +119,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         mPhotoRecyclerView.setOnScrollListener(scrollListener);*/
     }
 
-    private void loadPhotoData() {
+    /*private void loadPhotoData() {
         mProgressBar.setVisibility(View.VISIBLE);
 
         App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, 50, 1, SIZE_URL)
@@ -167,7 +164,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                         Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
                     }
                 });
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -258,10 +255,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
             if (mQuery == null) {
-                return new FlickrFetchr().fetchRecentPhotos();
+                return new FlickrReceiver().fetchRecentPhotos();
             } else {
                 mItems.clear();
-                return new FlickrFetchr().searchPhotos(mQuery);
+                return new FlickrReceiver().searchPhotos(mQuery);
             }
         }
 

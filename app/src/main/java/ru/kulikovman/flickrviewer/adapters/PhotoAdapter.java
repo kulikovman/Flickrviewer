@@ -23,10 +23,6 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<PhotoPreview, PhotoAd
 
     public PhotoAdapter(Context context, OrderedRealmCollection<PhotoPreview> photoPreviews) {
         super(photoPreviews, true);
-        // Only set this if the model class has a primary key that is also a integer or long.
-        // In that case, {@code getItemId(int)} must also be overridden to return the key.
-        //setHasStableIds(true);
-
         mContext = context;
         mPhotoPreviews = photoPreviews;
     }

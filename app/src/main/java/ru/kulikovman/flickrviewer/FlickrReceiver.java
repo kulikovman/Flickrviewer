@@ -26,8 +26,8 @@ import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
 import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
-public class FlickrFetchr {
-    private static final String TAG = "FlickrFetchr";
+public class FlickrReceiver {
+    private static final String TAG = "FlickrReceiver";
 
     private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private static final String RECENTS_METHOD = "flickr.photos.getRecent";
@@ -57,18 +57,18 @@ public class FlickrFetchr {
             .build();
 
 
-    private static FlickrFetchr sFlickrFetchr;
+    private static FlickrReceiver sFlickrReceiver;
     private RealmHelper mRealmHelper;
     private Realm mRealm;
 
-    public static FlickrFetchr get() {
-        if (sFlickrFetchr == null) {
-            sFlickrFetchr = new FlickrFetchr();
+    public static FlickrReceiver get() {
+        if (sFlickrReceiver == null) {
+            sFlickrReceiver = new FlickrReceiver();
         }
-        return sFlickrFetchr;
+        return sFlickrReceiver;
     }
 
-    FlickrFetchr() {
+    FlickrReceiver() {
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
     }
@@ -91,7 +91,7 @@ public class FlickrFetchr {
                                         preview.setTitle(photo.getTitle());
                                         preview.setUrl(photo.getUrlN());
 
-                                        // Сохраняем объект в базу
+                                        // Если такого фото еще нет, то добавляем в базу
                                         if (!mRealmHelper.isExistUrl(preview.getUrl())) {
                                             mRealm.beginTransaction();
                                             mRealm.insert(preview);
@@ -99,16 +99,11 @@ public class FlickrFetchr {
                                         } else {
                                             Log.d(TAG, "Такая картинка уже есть в базе: " + preview.getUrl());
                                         }
-
-                                        // Добавляем в старый список
-                                        //mPhotoList.add(photo);
                                     }
                                 }
 
                                 RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
                                 Log.d(TAG, "Объектов в базе: " + previews.size());
-
-                                //setUpPhotoRecyclerView();
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
