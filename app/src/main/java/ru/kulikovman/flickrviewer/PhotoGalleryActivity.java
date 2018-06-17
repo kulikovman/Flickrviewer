@@ -59,6 +59,12 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
+
     private void setupPhotoRecyclerView() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getNumberOfColumns());
         mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
