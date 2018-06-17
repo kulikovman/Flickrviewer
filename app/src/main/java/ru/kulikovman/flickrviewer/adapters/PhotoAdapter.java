@@ -13,18 +13,18 @@ import com.squareup.picasso.Picasso;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import ru.kulikovman.flickrviewer.R;
-import ru.kulikovman.flickrviewer.models.PhotoPreview;
+import ru.kulikovman.flickrviewer.models.Photo;
 
-public class PhotoAdapter extends RealmRecyclerViewAdapter<PhotoPreview, PhotoAdapter.PhotoHolder> {
+public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.PhotoHolder> {
     private static final String TAG = "PhotoAdapter";
 
     private Context mContext;
-    private OrderedRealmCollection<PhotoPreview> mPhotoPreviews;
+    private OrderedRealmCollection<Photo> mPhotos;
 
-    public PhotoAdapter(Context context, OrderedRealmCollection<PhotoPreview> photoPreviews) {
-        super(photoPreviews, true);
+    public PhotoAdapter(Context context, OrderedRealmCollection<Photo> photos) {
+        super(photos, true);
         mContext = context;
-        mPhotoPreviews = photoPreviews;
+        mPhotos = photos;
     }
 
     public class PhotoHolder extends RecyclerView.ViewHolder {
@@ -35,9 +35,9 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<PhotoPreview, PhotoAd
             mItemImageView = itemView.findViewById(R.id.image_container);
         }
 
-        public void bindPhoto(PhotoPreview photoPreview) {
+        public void bindPhoto(Photo photo) {
             Picasso.get()
-                    .load(photoPreview.getUrl())
+                    .load(photo.getUrlN())
                     .into(mItemImageView);
         }
     }
@@ -53,12 +53,12 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<PhotoPreview, PhotoAd
 
     @Override
     public void onBindViewHolder(@NonNull PhotoHolder photoHolder, int position) {
-        PhotoPreview photoPreview = mPhotoPreviews.get(position);
-        photoHolder.bindPhoto(photoPreview);
+        Photo photo = mPhotos.get(position);
+        photoHolder.bindPhoto(photo);
     }
 
     @Override
     public int getItemCount() {
-        return  mPhotoPreviews.size();
+        return  mPhotos.size();
     }
 }

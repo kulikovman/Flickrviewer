@@ -1,6 +1,5 @@
 package ru.kulikovman.flickrviewer;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -24,10 +23,9 @@ import retrofit2.Response;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
-public class FlickrReceiver {
-    private static final String TAG = "FlickrReceiver";
+public class FlickrFetcher {
+    private static final String TAG = "FlickrFetcher";
 
     private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private static final String RECENTS_METHOD = "flickr.photos.getRecent";
@@ -37,38 +35,18 @@ public class FlickrReceiver {
     private static final String SIZE_URL = "url_n";
     private static final int PER_PAGE = 60;
 
-
-
-
-
-
-
-
-    private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
-    private static final Uri ENDPOINT = Uri
-            .parse("https://api.flickr.com/services/rest/")
-            .buildUpon()
-            .appendQueryParameter("api_key", API_KEY)
-            .appendQueryParameter("format", "json")
-            .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("per_page", "100")
-            .appendQueryParameter("page", "1")
-            .appendQueryParameter("extras", "url_n")
-            .build();
-
-
-    private static FlickrReceiver sFlickrReceiver;
+    private static FlickrFetcher sFlickrFetcher;
     private RealmHelper mRealmHelper;
     private Realm mRealm;
 
-    public static FlickrReceiver get() {
-        if (sFlickrReceiver == null) {
-            sFlickrReceiver = new FlickrReceiver();
+    public static FlickrFetcher get() {
+        if (sFlickrFetcher == null) {
+            sFlickrFetcher = new FlickrFetcher();
         }
-        return sFlickrReceiver;
+        return sFlickrFetcher;
     }
 
-    FlickrReceiver() {
+    FlickrFetcher() {
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
     }
@@ -87,23 +65,23 @@ public class FlickrReceiver {
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     // Если есть ссылка на миниатюру
                                     if (photo.getUrlN() != null) {
-                                        PhotoPreview preview = new PhotoPreview(photo.getId());
+                                        /*PhotoPreview preview = new PhotoPreview(photo.getId());
                                         preview.setTitle(photo.getTitle());
-                                        preview.setUrl(photo.getUrlN());
+                                        preview.setUrl(photo.getUrlN());*/
 
                                         // Если такого фото еще нет, то добавляем в базу
-                                        if (!mRealmHelper.isExistUrl(preview.getUrl())) {
+                                        if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
                                             mRealm.beginTransaction();
-                                            mRealm.insert(preview);
+                                            mRealm.insert(photo);
                                             mRealm.commitTransaction();
                                         } else {
-                                            Log.d(TAG, "Такая картинка уже есть в базе: " + preview.getUrl());
+                                            Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
                                         }
                                     }
                                 }
 
-                                RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
-                                Log.d(TAG, "Объектов в базе: " + previews.size());
+                                RealmResults<Photo> photos = mRealm.where(Photo.class).findAll();
+                                Log.d(TAG, "Объектов в базе: " + photos.size());
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
@@ -152,15 +130,15 @@ public class FlickrReceiver {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public List<GalleryItem> fetchRecentPhotos() {
+    /*public List<GalleryItem> fetchRecentPhotos() {
         String url = buildUrl(FETCH_RECENTS_METHOD, null);
         return downloadGalleryItems(url);
-    }
+    }*/
 
-    public List<GalleryItem> searchPhotos(String query) {
+    /*public List<GalleryItem> searchPhotos(String query) {
         String url = buildUrl(SEARCH_METHOD, query);
         return downloadGalleryItems(url);
-    }
+    }*/
 
     private List<GalleryItem> downloadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
@@ -180,14 +158,14 @@ public class FlickrReceiver {
         return items;
     }
 
-    private String buildUrl(String method, String query) {
+    /*private String buildUrl(String method, String query) {
         Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("method", method);
 
         if (method.equals(SEARCH_METHOD)) {
             uriBuilder.appendQueryParameter("text", query);
         }
         return uriBuilder.build().toString();
-    }
+    }*/
 
     private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws IOException, JSONException {
         JSONObject photosJsonObject = jsonBody.getJSONObject("photos");

@@ -3,7 +3,13 @@ package ru.kulikovman.flickrviewer.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Photo {
+import io.realm.RealmObject;
+
+public class Photo extends RealmObject {
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String URL = "urlN";
+
     @SerializedName("id")
     @Expose
     private String id;

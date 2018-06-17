@@ -2,7 +2,6 @@ package ru.kulikovman.flickrviewer;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,18 +16,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.Realm;
-import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
-import ru.kulikovman.flickrviewer.models.FlickrResponse;
-import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.PhotoPreview;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
@@ -43,11 +32,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private Realm mRealm;
     private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
-    private List<Photo> mPhotoList = new ArrayList<>();
-    private List<PhotoPreview> mPhotoPreviews = new ArrayList<>();
 
     private RealmHelper mRealmHelper;
-    private FlickrReceiver mFlickrReceiver;
+    private FlickrFetcher mFlickrFetcher;
 
     private ProgressBar mProgressBar;
     private EndlessRecyclerViewScrollListener scrollListener;
@@ -65,7 +52,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         // Получаем важные штуки
         mRealmHelper = RealmHelper.get();
-        mFlickrReceiver = FlickrReceiver.get();
+        mFlickrFetcher = FlickrFetcher.get();
 
         // Запуск списка
         setUpPhotoRecyclerView();
@@ -74,7 +61,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         if (mRealmHelper.baseIsEmpty()) {
             Log.d(TAG, "База пустая, начинается загрузка...");
             //mProgressBar.setVisibility(View.VISIBLE);
-            mFlickrReceiver.loadRecentPhoto(1);
+            mFlickrFetcher.loadRecentPhoto(1);
         }
     }
 
@@ -82,14 +69,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getNumberOfColumns());
         mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
         mPhotoRecyclerView.setHasFixedSize(true);
-        mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoPreviewList());
+        mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoList());
         mPhotoRecyclerView.setAdapter(mPhotoAdapter);
 
         scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Подгрузка новых данных
-                mFlickrReceiver.loadRecentPhoto(page);
+                mFlickrFetcher.loadRecentPhoto(page);
                 Log.d(TAG, "Загрузка фотографий: " + page);
             }
         };
@@ -110,7 +97,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
                 if (totalItemCount - 30 < lastVisibleItems) {
                     mPage = mPage + 1;
-                    mFlickrReceiver.loadRecentPhoto(mPage);
+                    mFlickrFetcher.loadRecentPhoto(mPage);
                     Log.d(TAG, "Загрузка дополнительных фотографий: " + mPage);
                 }
             }
@@ -255,10 +242,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
             if (mQuery == null) {
-                return new FlickrReceiver().fetchRecentPhotos();
+                return new FlickrFetcher().fetchRecentPhotos();
             } else {
                 mItems.clear();
-                return new FlickrReceiver().searchPhotos(mQuery);
+                return new FlickrFetcher().searchPhotos(mQuery);
             }
         }
 
