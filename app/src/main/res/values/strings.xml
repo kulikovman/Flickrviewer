@@ -5,7 +5,10 @@
     <string name="clear_search">Clear Search</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+
+    <string name="send_button">Отправить</string>
+    <string name="save_button">Сохранить</string>
 
 </resources>

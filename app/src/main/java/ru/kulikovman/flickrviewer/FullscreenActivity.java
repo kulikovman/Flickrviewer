@@ -115,7 +115,7 @@ public class FullscreenActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.send_button).setOnTouchListener(mDelayHideTouchListener);
 
         // Получаем ссылку
         String photoUrl = (String) getIntent().getSerializableExtra("url_full_size");
