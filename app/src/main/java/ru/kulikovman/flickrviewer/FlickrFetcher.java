@@ -65,10 +65,6 @@ public class FlickrFetcher {
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
                                     // Если есть ссылка на миниатюру
                                     if (photo.getUrlN() != null) {
-                                        /*PhotoPreview preview = new PhotoPreview(photo.getId());
-                                        preview.setTitle(photo.getTitle());
-                                        preview.setUrl(photo.getUrlN());*/
-
                                         // Если такого фото еще нет, то добавляем в базу
                                         if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
                                             mRealm.beginTransaction();
@@ -94,10 +90,6 @@ public class FlickrFetcher {
                     }
                 });
     }
-
-
-
-
 
 
 
@@ -130,16 +122,6 @@ public class FlickrFetcher {
         return new String(getUrlBytes(urlSpec));
     }
 
-    /*public List<GalleryItem> fetchRecentPhotos() {
-        String url = buildUrl(FETCH_RECENTS_METHOD, null);
-        return downloadGalleryItems(url);
-    }*/
-
-    /*public List<GalleryItem> searchPhotos(String query) {
-        String url = buildUrl(SEARCH_METHOD, query);
-        return downloadGalleryItems(url);
-    }*/
-
     private List<GalleryItem> downloadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
 
@@ -157,15 +139,6 @@ public class FlickrFetcher {
 
         return items;
     }
-
-    /*private String buildUrl(String method, String query) {
-        Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("method", method);
-
-        if (method.equals(SEARCH_METHOD)) {
-            uriBuilder.appendQueryParameter("text", query);
-        }
-        return uriBuilder.build().toString();
-    }*/
 
     private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws IOException, JSONException {
         JSONObject photosJsonObject = jsonBody.getJSONObject("photos");
@@ -185,6 +158,4 @@ public class FlickrFetcher {
             items.add(item);
         }
     }
-
-
 }

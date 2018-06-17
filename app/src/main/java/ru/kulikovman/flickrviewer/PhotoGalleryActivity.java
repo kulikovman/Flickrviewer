@@ -22,13 +22,6 @@ import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
 
-    private static final String RECENTS_METHOD = "flickr.photos.getRecent";
-    private static final String SEARCH_METHOD = "flickr.photos.search";
-    private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
-    private static final String FORMAT = "json";
-    private static final int NOJSONCALLBACK = 1;
-    private static final String SIZE_URL = "url_n";
-
     private Realm mRealm;
     private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
@@ -82,76 +75,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         };
 
         mPhotoRecyclerView.addOnScrollListener(scrollListener);
-
-
-
-
-        /*RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                GridLayoutManager layoutManager = ((GridLayoutManager) recyclerView.getLayoutManager());
-                int totalItemCount = layoutManager.getItemCount();// Сколько всего элементов
-                int lastVisibleItems = layoutManager.findLastVisibleItemPosition();// Позиция последнего видимого элемента
-
-                if (totalItemCount - 30 < lastVisibleItems) {
-                    mPage = mPage + 1;
-                    mFlickrFetcher.loadRecentPhoto(mPage);
-                    Log.d(TAG, "Загрузка дополнительных фотографий: " + mPage);
-                }
-            }
-        };
-
-        mPhotoRecyclerView.setOnScrollListener(scrollListener);*/
     }
-
-    /*private void loadPhotoData() {
-        mProgressBar.setVisibility(View.VISIBLE);
-
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, 50, 1, SIZE_URL)
-                .enqueue(new Callback<FlickrResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
-                        mProgressBar.setVisibility(View.GONE);
-
-                        if (response.isSuccessful()) {
-                            Log.d(TAG, "Запрос прошел успешно: " + response.code());
-                            if (response.body() != null) {
-                                // Добавляем новые фото в список
-                                for (Photo photo : response.body().getPhotos().getPhoto()) {
-                                    // Если есть ссылка на миниатюру
-                                    if (photo.getUrlN() != null) {
-                                        PhotoPreview preview = new PhotoPreview(photo.getId());
-                                        preview.setTitle(photo.getTitle());
-                                        preview.setUrl(photo.getUrlN());
-
-                                        // Сохраняем объект в базу
-                                        mRealm.beginTransaction();
-                                        mRealm.insert(preview);
-                                        mRealm.commitTransaction();
-
-                                        // Добавляем в старый список
-                                        mPhotoList.add(photo);
-                                    }
-                                }
-
-                                RealmResults<PhotoPreview> previews = mRealm.where(PhotoPreview.class).findAll();
-                                Log.d(TAG, "Объектов в базе: " + previews.size());
-
-                                setUpPhotoRecyclerView();
-                            }
-                        } else {
-                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
-                    }
-                });
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
