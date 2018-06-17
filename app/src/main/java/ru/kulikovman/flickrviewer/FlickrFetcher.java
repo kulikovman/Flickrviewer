@@ -5,16 +5,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -26,30 +21,22 @@ import ru.kulikovman.flickrviewer.models.Photo;
 import ru.kulikovman.flickrviewer.models.Photos;
 
 public class FlickrFetcher {
-    private static final String TAG = "FlickrFetcher";
+    private final String TAG = "FlickrFetcher";
 
-    private static final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
-    private static final String RECENTS_METHOD = "flickr.photos.getRecent";
-    private static final String SEARCH_METHOD = "flickr.photos.search";
-    private static final String FORMAT = "json";
-    private static final int NOJSONCALLBACK = 1;
-    private static final String SIZE_URL = "url_n";
-    private static final int PER_PAGE = 60;
+    private final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
+    private final String RECENTS_METHOD = "flickr.photos.getRecent";
+    private final String SEARCH_METHOD = "flickr.photos.search";
+    private final String FORMAT = "json";
+    private final int NOJSONCALLBACK = 1;
+    private final String SIZE_URL = "url_n";
+    private final int PER_PAGE = 60;
 
-    private static FlickrFetcher sFlickrFetcher;
     private RealmHelper mRealmHelper;
     private Realm mRealm;
     private Context mContext;
     private List<Photo> mPhotos;
 
-    public static FlickrFetcher get(Context context) {
-        if (sFlickrFetcher == null) {
-            sFlickrFetcher = new FlickrFetcher(context);
-        }
-        return sFlickrFetcher;
-    }
-
-    private FlickrFetcher(Context context) {
+    FlickrFetcher(Context context) {
         mContext = context;
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
@@ -121,7 +108,7 @@ public class FlickrFetcher {
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_LONG).show();
                         Log.d(TAG, "Error with internet connection: " + t.getMessage());
                     }
                 });
@@ -173,7 +160,7 @@ public class FlickrFetcher {
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_LONG).show();
                         Log.d(TAG, "Error with internet connection: " + t.getMessage());
                     }
                 });

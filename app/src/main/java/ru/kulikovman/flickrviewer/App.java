@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import io.realm.Realm;
@@ -10,7 +11,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
-    private static FlickrApi mFlickrApi;
+    private static Application sInstance;
+    private static FlickrApi sFlickrApi;
 
     @Override
     public void onCreate() {
@@ -35,10 +37,14 @@ public class App extends Application {
                 .client(client)
                 .build();
 
-        mFlickrApi = retrofit.create(FlickrApi.class);
+        sFlickrApi = retrofit.create(FlickrApi.class);
     }
 
     public static FlickrApi getApi() {
-        return mFlickrApi;
+        return sFlickrApi;
+    }
+
+    public static Context getContext() {
+        return sInstance.getApplicationContext();
     }
 }

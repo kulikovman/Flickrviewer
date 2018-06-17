@@ -1,6 +1,5 @@
 package ru.kulikovman.flickrviewer.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,12 +17,10 @@ import ru.kulikovman.flickrviewer.models.Photo;
 public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.PhotoHolder> {
     private static final String TAG = "PhotoAdapter";
 
-    private Context mContext;
     private OrderedRealmCollection<Photo> mPhotos;
 
-    public PhotoAdapter(Context context, OrderedRealmCollection<Photo> photos) {
+    public PhotoAdapter(OrderedRealmCollection<Photo> photos) {
         super(photos, true);
-        mContext = context;
         mPhotos = photos;
     }
 
