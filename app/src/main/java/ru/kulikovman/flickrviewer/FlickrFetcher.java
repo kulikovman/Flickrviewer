@@ -56,30 +56,26 @@ public class FlickrFetcher {
     }
 
     public void loadPhoto() {
-        getRecentPhoto(1);
-    }
-
-    public void loadPhoto(int page) {
-        getRecentPhoto(page);
+        getRecentPhoto(1, false);
     }
 
     public void loadPhoto(String searchQuery) {
         if (searchQuery == null) {
-            getRecentPhoto(1);
+            getRecentPhoto(1, true);
         } else {
-            getSearchPhoto(searchQuery, 1);
+            getSearchPhoto(searchQuery, 1, true);
         }
     }
 
     public void loadPhoto(String searchQuery, int page) {
         if (searchQuery == null) {
-            getRecentPhoto(page);
+            getRecentPhoto(page, false);
         } else {
-            getSearchPhoto(searchQuery, page);
+            getSearchPhoto(searchQuery, page, false);
         }
     }
 
-    private void getRecentPhoto(int page) {
+    private void getRecentPhoto(int page, final boolean clearData) {
         App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
@@ -95,6 +91,13 @@ public class FlickrFetcher {
                                 }
 
                                 if (mPhotos != null) {
+                                    // Очистка базы
+                                    if (clearData) {
+                                        mRealm.beginTransaction();
+                                        mRealm.deleteAll();
+                                        mRealm.commitTransaction();
+                                    }
+
                                     // Добавляем новые фото в список
                                     for (Photo photo : mPhotos) {
                                         // Если есть ссылка на миниатюру
@@ -124,7 +127,7 @@ public class FlickrFetcher {
                 });
     }
 
-    private void getSearchPhoto(String searchQuery, int page) {
+    private void getSearchPhoto(String searchQuery, int page, final boolean clearData) {
         App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page, searchQuery)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
@@ -140,6 +143,13 @@ public class FlickrFetcher {
                                 }
 
                                 if (mPhotos != null) {
+                                    // Очистка базы
+                                    if (clearData) {
+                                        mRealm.beginTransaction();
+                                        mRealm.deleteAll();
+                                        mRealm.commitTransaction();
+                                    }
+
                                     // Добавляем новые фото в список
                                     for (Photo photo : mPhotos) {
                                         // Если есть ссылка на миниатюру
@@ -169,8 +179,8 @@ public class FlickrFetcher {
                 });
     }
 
-
-    public byte[] getUrlBytes(String urlSpec) throws IOException {
+    // Старый способ подключения
+    private byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -197,42 +207,5 @@ public class FlickrFetcher {
 
     public String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBytes(urlSpec));
-    }
-
-    private List<GalleryItem> downloadGalleryItems(String url) {
-        List<GalleryItem> items = new ArrayList<>();
-
-        try {
-            String jsonString = getUrlString(url);
-            Log.i(TAG, "Received JSON: " + jsonString);
-
-            JSONObject jsonBody = new JSONObject(jsonString);
-            parseItems(items, jsonBody);
-        } catch (JSONException je) {
-            Log.e(TAG, "Failed to parse JSON", je);
-        } catch (IOException ioe) {
-            Log.e(TAG, "Failed to fetch items", ioe);
-        }
-
-        return items;
-    }
-
-    private void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws IOException, JSONException {
-        JSONObject photosJsonObject = jsonBody.getJSONObject("photos");
-        JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
-
-        for (int i = 0; i < photoJsonArray.length(); i++) {
-            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
-            GalleryItem item = new GalleryItem();
-            item.setId(photoJsonObject.getString("id"));
-            item.setCaption(photoJsonObject.getString("title"));
-
-            if (!photoJsonObject.has("url_n")) {
-                continue;
-            }
-
-            item.setUrl(photoJsonObject.getString("url_n"));
-            items.add(item);
-        }
     }
 }

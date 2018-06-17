@@ -95,9 +95,6 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 // Сброс базы и настроек перед новым запросом
-                mRealm.beginTransaction();
-                mRealm.deleteAll();
-                mRealm.commitTransaction();
                 mScrollListener.resetState();
                 mSearchQuery = s;
 
