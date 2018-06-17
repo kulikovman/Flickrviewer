@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
@@ -23,15 +23,16 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private static final String TAG = "PhotoGalleryActivity";
 
     private Realm mRealm;
-    private RecyclerView mPhotoRecyclerView;
-    private PhotoAdapter mPhotoAdapter;
-
     private RealmHelper mRealmHelper;
     private FlickrFetcher mFlickrFetcher;
 
-    private ProgressBar mProgressBar;
+    private RecyclerView mPhotoRecyclerView;
+    private PhotoAdapter mPhotoAdapter;
     private EndlessRecyclerViewScrollListener mScrollListener;
+
+    private ProgressBar mProgressBar;
     private String mSearchQuery = "";
+    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +45,35 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         mPhotoRecyclerView = findViewById(R.id.photo_recycler_view);
         mProgressBar = findViewById(R.id.progress_bar);
 
-        // Получаем важные штуки
+        // Инициализация разных нужностей
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
         mFlickrFetcher = FlickrFetcher.get(this);
+        mSharedPref = getPreferences(Context.MODE_PRIVATE);
 
-        // Если база пустая, то загружаем новые фото
-        if (mRealmHelper.baseIsEmpty()) {
+        // Если база пустая
+        if (mRealm.isEmpty()) {
+            // Загружаем новые фото
             mFlickrFetcher.loadPhoto();
+        } else {
+            // Восстанавливаем значение поискового запроса
+            mSearchQuery = mSharedPref.getString(getString(R.string.search_query), "");
         }
 
-        // Запуск списка
+        // Запуск списка фотографий
         setupPhotoRecyclerView();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Сохраняем поисковый запрос
+        mSharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(getString(R.string.search_query), mSearchQuery);
+        editor.apply();
     }
 
     @Override

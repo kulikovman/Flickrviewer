@@ -8,14 +8,8 @@ import ru.kulikovman.flickrviewer.models.FlickrResponse;
 public interface FlickrApi {
 
     // Пример Flickr запроса:
-    // https://api.flickr.com/services/rest/
-    // ?method=flickr.photos.getRecent
-    // &api_key=92cc75b96a9f82a32bc29eb21a254fe4
-    // &format=json
-    // &nojsoncallback=1
-    // &per_page=15
-    // &page=1
-    // &extras=url_n
+    // https://api.flickr.com/services/rest/?method=flickr.photos.getRecent
+    // &api_key=92cc75&format=json&nojsoncallback=1&per_page=15&page=1&extras=url_n
 
     @GET("rest/")
     Call<FlickrResponse> getRecent(@Query("method") String method,

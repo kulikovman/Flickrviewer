@@ -19,10 +19,6 @@ public class RealmHelper {
         mRealm = Realm.getDefaultInstance();
     }
 
-    public boolean baseIsEmpty() {
-        return mRealm.isEmpty();
-    }
-
     public boolean isExistUrl(String url) {
         Photo photo = mRealm.where(Photo.class)
                 .equalTo(Photo.URL, url)
