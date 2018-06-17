@@ -22,7 +22,6 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
     private OrderedRealmCollection<Photo> mPhotos;
     private Context mContext;
-    private Photo mPhoto;
 
     public PhotoAdapter(Context context, OrderedRealmCollection<Photo> photos) {
         super(photos, true);
@@ -32,6 +31,7 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
     public class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mItemImageView;
+        private Photo mPhoto;
 
         public PhotoHolder(View itemView) {
             super(itemView);
@@ -48,17 +48,12 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
         @Override
         public void onClick(View v) {
-            // https://farm1.staticflickr.com/2/1418878_1e92283336_m.jpg
-            // farm-id: 1
-            // server-id: 2
-            // photo-id: 1418878
-            // secret: 1e92283336
-            // size: m
+            // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
 
             // Формируем ссылку на оригинал фото
             String urlFullSize = "https://farm" + mPhoto.getFarm() + ".staticflickr.com/"
                     + mPhoto.getServer() + "/" + mPhoto.getId() + "_" + mPhoto.getSecret()
-                    + "_o.jpg";
+                    + "_b.jpg";
 
             // Передаем ссылку в фуллскрин активити
             Intent intent = new Intent(mContext, FullscreenActivity.class);

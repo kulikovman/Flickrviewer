@@ -12,6 +12,9 @@ public interface FlickrApi {
     // &api_key=92cc75b96a9f82a32bc29eb21a254fe4
     // &format=json&nojsoncallback=1&per_page=60&page=1&extras=url_n&text=girl
 
+    // https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=92cc75b96a9f82a32bc29eb21a254fe4&format=json&nojsoncallback=1&photo_id=27983986247
+
+
     @GET("rest/")
     Call<FlickrResponse> getRecent(@Query("method") String method,
                                    @Query("api_key") String api_key,
@@ -33,4 +36,14 @@ public interface FlickrApi {
 
     // Пример запроса оригинала по данным из миниатюры
     // https://farm1.staticflickr.com/2/1418878_1e92283336_m.jpg
+
+    @GET("rest/")
+    Call<FlickrResponse> getSize(@Query("method") String method,
+                                   @Query("api_key") String api_key,
+                                   @Query("format") String format,
+                                   @Query("nojsoncallback") int nojsoncallback,
+                                   @Query("per_page") int per_page,
+                                   @Query("extras") String size_url,
+                                   @Query("page") int page,
+                                   @Query("text") String searchQuery);
 }

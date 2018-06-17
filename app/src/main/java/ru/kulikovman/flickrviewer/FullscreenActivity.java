@@ -5,10 +5,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -97,7 +101,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
+        mContentView = findViewById(R.id.original_photo_container);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -112,6 +116,19 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        // Получаем ссылку
+        String photoUrl = (String) getIntent().getSerializableExtra("url_full_size");
+        Log.d("log", "Ссылка: " + photoUrl);
+
+        // Загружаем картинку
+        if (photoUrl != null) {
+
+            //ImageView imageView = findViewById(R.id.original_photo_container);
+            Picasso.get()
+                    .load(photoUrl)
+                    .into((ImageView) mContentView);
+        }
     }
 
     @Override
