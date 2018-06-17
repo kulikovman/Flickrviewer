@@ -30,7 +30,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private FlickrFetcher mFlickrFetcher;
 
     private ProgressBar mProgressBar;
-    private EndlessRecyclerViewScrollListener scrollListener;
+    private EndlessRecyclerViewScrollListener mScrollListener;
+    private String mSearchQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,37 +45,36 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar);
 
         // Получаем важные штуки
+        mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
-        mFlickrFetcher = FlickrFetcher.get();
+        mFlickrFetcher = FlickrFetcher.get(this);
+
+        // Если база пустая, то загружаем новые фото
+        if (mRealmHelper.baseIsEmpty()) {
+            mFlickrFetcher.loadPhoto();
+        }
 
         // Запуск списка
-        setUpPhotoRecyclerView();
+        setupPhotoRecyclerView();
 
-        // Если база пустая, то подгружаем новые фото
-        if (mRealmHelper.baseIsEmpty()) {
-            Log.d(TAG, "База пустая, начинается загрузка...");
-            //mProgressBar.setVisibility(View.VISIBLE);
-            mFlickrFetcher.loadRecentPhoto(1);
-        }
     }
 
-    private void setUpPhotoRecyclerView() {
+    private void setupPhotoRecyclerView() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getNumberOfColumns());
         mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
         mPhotoRecyclerView.setHasFixedSize(true);
         mPhotoAdapter = new PhotoAdapter(this, mRealmHelper.getPhotoList());
         mPhotoRecyclerView.setAdapter(mPhotoAdapter);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+        mScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Подгрузка новых данных
-                mFlickrFetcher.loadRecentPhoto(page);
-                Log.d(TAG, "Загрузка фотографий: " + page);
+                // Загрузка дополнительных фото
+                mFlickrFetcher.loadPhoto(mSearchQuery, page);
             }
         };
 
-        mPhotoRecyclerView.addOnScrollListener(scrollListener);
+        mPhotoRecyclerView.addOnScrollListener(mScrollListener);
     }
 
     @Override
@@ -88,29 +88,27 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.d(TAG, "QueryTextSubmit: " + s);
-                QueryPreferences.setStoredQuery(PhotoGalleryActivity.this, s);
+                // Сброс базы и настроек перед новым запросом
+                mRealm.beginTransaction();
+                mRealm.deleteAll();
+                mRealm.commitTransaction();
+                mScrollListener.resetState();
+                mSearchQuery = s;
+
+                // Получение фото
+                mFlickrFetcher.loadPhoto(mSearchQuery);
+
+                // Свертывание поиска
                 searchView.clearFocus();
                 searchView.onActionViewCollapsed();
-                //updateItems();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                Log.d(TAG, "QueryTextChange: " + s);
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });
-
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String query = QueryPreferences.getStoredQuery(PhotoGalleryActivity.this);
-                searchView.setQuery(query, false);
-            }
-        });
-
         return true;
     }
 
@@ -191,7 +189,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 }
             }
 
-            setUpPhotoRecyclerView();
+            setupPhotoRecyclerView();
         }
     }*/
 }

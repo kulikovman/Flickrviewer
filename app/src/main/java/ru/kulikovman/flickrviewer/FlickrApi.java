@@ -7,7 +7,7 @@ import ru.kulikovman.flickrviewer.models.FlickrResponse;
 
 public interface FlickrApi {
 
-    // Пример запроса:
+    // Пример Flickr запроса:
     // https://api.flickr.com/services/rest/
     // ?method=flickr.photos.getRecent
     // &api_key=92cc75b96a9f82a32bc29eb21a254fe4
@@ -23,8 +23,8 @@ public interface FlickrApi {
                                    @Query("format") String format,
                                    @Query("nojsoncallback") int nojsoncallback,
                                    @Query("per_page") int per_page,
-                                   @Query("page") int page,
-                                   @Query("extras") String size_url);
+                                   @Query("extras") String size_url,
+                                   @Query("page") int page);
 
     @GET("rest/")
     Call<FlickrResponse> getSearch(@Query("method") String method,
@@ -32,7 +32,7 @@ public interface FlickrApi {
                                    @Query("format") String format,
                                    @Query("nojsoncallback") int nojsoncallback,
                                    @Query("per_page") int per_page,
-                                   @Query("page") int page,
                                    @Query("extras") String size_url,
-                                   @Query("text") String searchTerm);
+                                   @Query("page") int page,
+                                   @Query("text") String searchQuery);
 }

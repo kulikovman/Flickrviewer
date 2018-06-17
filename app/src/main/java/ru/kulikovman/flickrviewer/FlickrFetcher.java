@@ -1,7 +1,9 @@
 package ru.kulikovman.flickrviewer;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,28 +40,51 @@ public class FlickrFetcher {
     private static FlickrFetcher sFlickrFetcher;
     private RealmHelper mRealmHelper;
     private Realm mRealm;
+    private Context mContext;
 
-    public static FlickrFetcher get() {
+    public static FlickrFetcher get(Context context) {
         if (sFlickrFetcher == null) {
-            sFlickrFetcher = new FlickrFetcher();
+            sFlickrFetcher = new FlickrFetcher(context);
         }
         return sFlickrFetcher;
     }
 
-    FlickrFetcher() {
+    FlickrFetcher(Context context) {
+        mContext = context;
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
     }
 
-    public void loadRecentPhoto(int page) {
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, page, SIZE_URL)
+    public void loadPhoto() {
+        getRecentPhoto(1);
+    }
+
+    public void loadPhoto(int page) {
+        getRecentPhoto(page);
+    }
+
+    public void loadPhoto(String searchQuery) {
+        if (searchQuery == null) {
+            getRecentPhoto(1);
+        } else {
+            getSearchPhoto(searchQuery, 1);
+        }
+    }
+
+    public void loadPhoto(String searchQuery, int page) {
+        if (searchQuery == null) {
+            getRecentPhoto(page);
+        } else {
+            getSearchPhoto(searchQuery, page);
+        }
+    }
+
+    public void getRecentPhoto(int page) {
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
-                        //mProgressBar.setVisibility(View.GONE);
-
                         if (response.isSuccessful()) {
-                            Log.d(TAG, "Запрос прошел успешно: " + response.code());
                             if (response.body() != null) {
                                 // Добавляем новые фото в список
                                 for (Photo photo : response.body().getPhotos().getPhoto()) {
@@ -75,9 +100,6 @@ public class FlickrFetcher {
                                         }
                                     }
                                 }
-
-                                RealmResults<Photo> photos = mRealm.where(Photo.class).findAll();
-                                Log.d(TAG, "Объектов в базе: " + photos.size());
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
@@ -86,11 +108,46 @@ public class FlickrFetcher {
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "Ошибка при отправке запроса: " + t.getMessage());
+                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Error with internet connection: " + t.getMessage());
                     }
                 });
     }
 
+    private void getSearchPhoto(String searchQuery, int page) {
+        App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page, searchQuery)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                // Добавляем новые фото в список
+                                for (Photo photo : response.body().getPhotos().getPhoto()) {
+                                    // Если есть ссылка на миниатюру
+                                    if (photo.getUrlN() != null) {
+                                        // Если такого фото еще нет, то добавляем в базу
+                                        if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
+                                            mRealm.beginTransaction();
+                                            mRealm.insert(photo);
+                                            mRealm.commitTransaction();
+                                        } else {
+                                            Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Error with internet connection: " + t.getMessage());
+                    }
+                });
+    }
 
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {

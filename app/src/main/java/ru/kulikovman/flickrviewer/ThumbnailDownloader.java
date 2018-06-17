@@ -33,7 +33,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         mResponseHandler = responseHandler;
     }
 
-    @Override
+    /*@Override
     protected void onLooperPrepared() {
         mRequestHandler = new Handler() {
             @Override
@@ -86,5 +86,5 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         } catch (IOException ioe) {
             Log.e(TAG, "Error downloading image", ioe);
         }
-    }
+    }*/
 }
