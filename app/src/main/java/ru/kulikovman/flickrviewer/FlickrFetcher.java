@@ -18,12 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
-import ru.kulikovman.flickrviewer.models.GalleryItem;
 import ru.kulikovman.flickrviewer.models.Photo;
 import ru.kulikovman.flickrviewer.models.Photos;
 

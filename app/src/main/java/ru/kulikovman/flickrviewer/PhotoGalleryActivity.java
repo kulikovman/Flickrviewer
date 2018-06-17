@@ -1,7 +1,6 @@
 package ru.kulikovman.flickrviewer;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
