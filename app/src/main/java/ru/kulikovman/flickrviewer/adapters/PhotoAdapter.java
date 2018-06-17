@@ -40,6 +40,7 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
         }
 
         public void bindPhoto(Photo photo) {
+            mPhoto = photo;
             Picasso.get()
                     .load(photo.getUrlN())
                     .into(mItemImageView);
@@ -47,7 +48,21 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
         @Override
         public void onClick(View v) {
+            // https://farm1.staticflickr.com/2/1418878_1e92283336_m.jpg
+            // farm-id: 1
+            // server-id: 2
+            // photo-id: 1418878
+            // secret: 1e92283336
+            // size: m
+
+            // Формируем ссылку на оригинал фото
+            String urlFullSize = "https://farm" + mPhoto.getFarm() + ".staticflickr.com/"
+                    + mPhoto.getServer() + "/" + mPhoto.getId() + "_" + mPhoto.getSecret()
+                    + "_o.jpg";
+
+            // Передаем ссылку в фуллскрин активити
             Intent intent = new Intent(mContext, FullscreenActivity.class);
+            intent.putExtra("url_full_size", urlFullSize);
             mContext.startActivity(intent);
         }
     }
@@ -69,6 +84,6 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
     @Override
     public int getItemCount() {
-        return  mPhotos.size();
+        return mPhotos.size();
     }
 }
