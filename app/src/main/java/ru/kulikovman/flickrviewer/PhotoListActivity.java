@@ -1,5 +1,6 @@
 package ru.kulikovman.flickrviewer;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -26,6 +27,7 @@ public class PhotoListActivity extends AppCompatActivity {
     private RealmHelper mRealmHelper;
     private FlickrFetcher mFlickrFetcher;
     private SharedPreferences mSharedPref;
+    private ProgressDialog mProgressDialog;
 
     private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
@@ -55,7 +57,6 @@ public class PhotoListActivity extends AppCompatActivity {
         // Если база пустая
         if (mRealm.isEmpty()) {
             mScrollListener.resetState();
-            setTitle(createNewTitle(""));
             mFlickrFetcher.loadPhoto();
         }
 
@@ -151,7 +152,8 @@ public class PhotoListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_recent_photo:
                 mScrollListener.resetState();
-                setTitle(getString(R.string.app_name));
+                setTitle(createNewTitle(""));
+                mSearchQuery = "";
                 mFlickrFetcher.loadPhoto(true);
                 return true;
             case R.id.menu_photo_on_map:
