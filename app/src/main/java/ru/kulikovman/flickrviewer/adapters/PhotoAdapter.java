@@ -58,6 +58,7 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
             // Передаем ссылку в фуллскрин активити
             Intent intent = new Intent(mContext, FullscreenActivity.class);
             intent.putExtra("url_full_size", urlFullSize);
+            intent.putExtra("photo_title", mPhoto.getTitle());
             mContext.startActivity(intent);
         }
     }

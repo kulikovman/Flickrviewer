@@ -117,14 +117,17 @@ public class FullscreenActivity extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.send_button).setOnTouchListener(mDelayHideTouchListener);
 
-        // Получаем ссылку
+        // Получаем значения
         String photoUrl = (String) getIntent().getSerializableExtra("url_full_size");
-        Log.d("log", "Ссылка: " + photoUrl);
+        String photoTitle = (String) getIntent().getSerializableExtra("photo_title");
+
+        // Ставим заголовок
+        if (photoTitle != null) {
+            setTitle(photoTitle);
+        }
 
         // Загружаем картинку
         if (photoUrl != null) {
-
-            //ImageView imageView = findViewById(R.id.original_photo_container);
             Picasso.get()
                     .load(photoUrl)
                     .into((ImageView) mContentView);

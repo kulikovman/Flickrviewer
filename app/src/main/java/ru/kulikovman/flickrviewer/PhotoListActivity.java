@@ -25,14 +25,13 @@ public class PhotoListActivity extends AppCompatActivity {
     private Realm mRealm;
     private RealmHelper mRealmHelper;
     private FlickrFetcher mFlickrFetcher;
+    private SharedPreferences mSharedPref;
 
     private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private EndlessRecyclerViewScrollListener mScrollListener;
 
-    private ProgressBar mProgressBar;
     private String mSearchQuery = "";
-    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class PhotoListActivity extends AppCompatActivity {
 
         // Инициализация вью элементов
         mPhotoRecyclerView = findViewById(R.id.photo_recycler_view);
-        mProgressBar = findViewById(R.id.progress_bar);
 
         // Инициализация разных нужностей
         mRealm = Realm.getDefaultInstance();
@@ -57,6 +55,7 @@ public class PhotoListActivity extends AppCompatActivity {
         // Если база пустая
         if (mRealm.isEmpty()) {
             mScrollListener.resetState();
+            setTitle(createNewTitle(""));
             mFlickrFetcher.loadPhoto();
         }
 
