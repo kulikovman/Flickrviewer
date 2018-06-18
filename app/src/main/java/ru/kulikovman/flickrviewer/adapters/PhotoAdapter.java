@@ -48,7 +48,7 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
                     .centerCrop()
                     .fit()
                     .noFade()
-                    .placeholder(R.drawable.ic_autorenew_24dp)
+                    .placeholder(R.drawable.image_loading)
                     .into(mItemImageView);
         }
 
