@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,12 +32,12 @@ public class PhotoListActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private String mSearchQuery = "";
+    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_list);
-
         Log.d(TAG, "Запущен onCreate в PhotoListActivity");
 
         // Инициализация вью элементов
@@ -48,17 +49,36 @@ public class PhotoListActivity extends AppCompatActivity {
         mRealmHelper = RealmHelper.get();
         mFlickrFetcher = new FlickrFetcher(this);
 
+        // Восстанавливаем поисковый запрос и заголовок
+        mSharedPref = getPreferences(Context.MODE_PRIVATE);
+        mSearchQuery = mSharedPref.getString(getString(R.string.search_query), "");
+        setTitle(createNewTitle(mSearchQuery));
+
         // Если база пустая
         if (mRealm.isEmpty()) {
-            // Загружаем новые фото
             mScrollListener.resetState();
-            setTitle(createNewTitle(mSearchQuery));
             mFlickrFetcher.loadPhoto();
         }
 
-        // Запуск списка фотографий
+        // Запуск сетки фотографий
         setupPhotoRecyclerView();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "Запущен onPause в PhotoListActivity");
+
+        // Сохранение поискового запроса
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(getString(R.string.search_query), mSearchQuery);
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Запущен onResume в PhotoListActivity");
     }
 
     @Override
@@ -96,11 +116,9 @@ public class PhotoListActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                // Сброс базы и настроек перед новым запросом
+                // Подготовка к запросу
                 mScrollListener.resetState();
                 mSearchQuery = s;
-
-                // Новый заголовок
                 setTitle(createNewTitle(s));
 
                 // Получение фото
