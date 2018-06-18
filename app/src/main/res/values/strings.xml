@@ -7,8 +7,9 @@
     <string name="send_button">Send</string>
     <string name="save_button">Save</string>
 
-    <!-- Разное -->
+    <!-- Меню -->
     <string name="search">Search</string>
-    <string name="clear_search">Clear Search</string>
+    <string name="recent_photo">Recent photo</string>
+    <string name="photo_on_map">Photo on map</string>
 
 </resources>

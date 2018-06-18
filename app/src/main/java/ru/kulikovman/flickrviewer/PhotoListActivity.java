@@ -18,8 +18,8 @@ import android.widget.ProgressBar;
 import io.realm.Realm;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
 
-public class PhotoGalleryActivity extends AppCompatActivity {
-    private static final String TAG = "PhotoGalleryActivity";
+public class PhotoListActivity extends AppCompatActivity {
+    private static final String TAG = "PhotoListActivity";
 
     private Realm mRealm;
     private RealmHelper mRealmHelper;
@@ -35,9 +35,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo_gallery);
+        setContentView(R.layout.activity_photo_list);
 
-        Log.d(TAG, "Запущен onCreate в PhotoGalleryActivity");
+        Log.d(TAG, "Запущен onCreate в PhotoListActivity");
 
         // Инициализация вью элементов
         mPhotoRecyclerView = findViewById(R.id.photo_recycler_view);
@@ -89,7 +89,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
 
         // Обработчик поисковых запросов
-        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -119,7 +119,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обрабатываем нажатие
         switch (item.getItemId()) {
-            case R.id.menu_item_clear:
+            case R.id.menu_recent_photo:
                 //QueryPreferences.setStoredQuery(this, null);
                 //updateItems();
                 return true;
@@ -161,7 +161,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             mProgressDialog = ProgressDialog
-                    .show(PhotoGalleryActivity.this, "Loading", "Wait while loading...", false);
+                    .show(PhotoListActivity.this, "Loading", "Wait while loading...", false);
         }
 
         @Override

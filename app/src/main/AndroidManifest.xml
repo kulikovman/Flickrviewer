@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PhotoGalleryActivity">
+        <activity android:name=".PhotoListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -23,11 +23,11 @@
             android:name=".FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
-            android:parentActivityName=".PhotoGalleryActivity"
+            android:parentActivityName=".PhotoListActivity"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ru.kulikovman.flickrviewer.PhotoGalleryActivity"/>
+                android:value="ru.kulikovman.flickrviewer.PhotoListActivity"/>
         </activity>
     </application>
 
