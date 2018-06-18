@@ -2,6 +2,7 @@ package ru.kulikovman.flickrviewer.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,14 +44,18 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
             mPhoto = photo;
             Picasso.get()
                     .load(photo.getUrlN())
+                    .config(Bitmap.Config.ARGB_4444)
+                    .centerCrop()
+                    .fit()
+                    .noFade()
+                    .placeholder(R.drawable.ic_autorenew_24dp)
                     .into(mItemImageView);
         }
 
         @Override
         public void onClick(View v) {
-            // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
-
             // Формируем ссылку на оригинал фото
+            // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
             String urlFullSize = "https://farm" + mPhoto.getFarm() + ".staticflickr.com/"
                     + mPhoto.getServer() + "/" + mPhoto.getId() + "_" + mPhoto.getSecret()
                     + "_b.jpg";
