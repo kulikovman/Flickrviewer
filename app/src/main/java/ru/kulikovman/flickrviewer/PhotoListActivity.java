@@ -51,6 +51,8 @@ public class PhotoListActivity extends AppCompatActivity {
         // Если база пустая
         if (mRealm.isEmpty()) {
             // Загружаем новые фото
+            mScrollListener.resetState();
+            setTitle(createNewTitle(mSearchQuery));
             mFlickrFetcher.loadPhoto();
         }
 
@@ -76,7 +78,7 @@ public class PhotoListActivity extends AppCompatActivity {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Загрузка дополнительных фото
-                mFlickrFetcher.loadPhoto(mSearchQuery, page);
+                mFlickrFetcher.loadPhoto(mSearchQuery, page, false);
             }
         };
 
@@ -86,7 +88,7 @@ public class PhotoListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Подключаем макет меню
-        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
 
         // Обработчик поисковых запросов
         MenuItem searchItem = menu.findItem(R.id.menu_search);
@@ -98,8 +100,11 @@ public class PhotoListActivity extends AppCompatActivity {
                 mScrollListener.resetState();
                 mSearchQuery = s;
 
+                // Новый заголовок
+                setTitle(createNewTitle(s));
+
                 // Получение фото
-                mFlickrFetcher.loadPhoto(mSearchQuery);
+                mFlickrFetcher.loadPhoto(mSearchQuery, true);
 
                 // Свертывание поиска
                 searchView.clearFocus();
@@ -115,13 +120,27 @@ public class PhotoListActivity extends AppCompatActivity {
         return true;
     }
 
+    private String createNewTitle(String title) {
+        if(title == null || title.isEmpty()) {
+            return getString(R.string.app_name);
+        } else {
+            return title.substring(0, 1).toUpperCase() + title.substring(1);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обрабатываем нажатие
         switch (item.getItemId()) {
             case R.id.menu_recent_photo:
-                //QueryPreferences.setStoredQuery(this, null);
-                //updateItems();
+                mScrollListener.resetState();
+                setTitle(getString(R.string.app_name));
+                mFlickrFetcher.loadPhoto(true);
+                return true;
+            case R.id.menu_photo_on_map:
+                // Открываем карту
+
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

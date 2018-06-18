@@ -1,6 +1,6 @@
 <resources>
     <!-- Названия -->
-    <string name="app_name">Flickr viewer</string>
+    <string name="app_name">Recent photo</string>
     <string name="title_activity_fullscreen">Fullscreen photo</string>
 
     <!-- Кнопки -->

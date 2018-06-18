@@ -46,19 +46,23 @@ public class FlickrFetcher {
         getRecentPhoto(1, false);
     }
 
-    public void loadPhoto(String searchQuery) {
+    public void loadPhoto(boolean clearData) {
+        getRecentPhoto(1, clearData);
+    }
+
+    public void loadPhoto(String searchQuery, boolean clearData) {
         if (searchQuery == null) {
-            getRecentPhoto(1, true);
+            getRecentPhoto(1, clearData);
         } else {
-            getSearchPhoto(searchQuery, 1, true);
+            getSearchPhoto(searchQuery, 1, clearData);
         }
     }
 
-    public void loadPhoto(String searchQuery, int page) {
+    public void loadPhoto(String searchQuery, int page, boolean clearData) {
         if (searchQuery == null) {
-            getRecentPhoto(page, false);
+            getRecentPhoto(page, clearData);
         } else {
-            getSearchPhoto(searchQuery, page, false);
+            getSearchPhoto(searchQuery, page, clearData);
         }
     }
 

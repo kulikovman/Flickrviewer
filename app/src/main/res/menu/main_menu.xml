@@ -15,7 +15,7 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menu_map"
+        android:id="@+id/menu_photo_on_map"
         android:title="@string/photo_on_map"
         android:icon="@drawable/ic_map_24dp"
         app:showAsAction="never"/>
