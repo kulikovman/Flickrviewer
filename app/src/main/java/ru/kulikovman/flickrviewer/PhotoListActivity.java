@@ -15,7 +15,6 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 import io.realm.Realm;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
@@ -158,7 +157,6 @@ public class PhotoListActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_photo_on_map:
                 // Открываем карту
-
 
                 return true;
             default:
