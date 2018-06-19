@@ -150,7 +150,7 @@ public class PhotoListActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_photo_on_map:
                 // Открываем карту
-                Intent intent = new Intent(this, MapActivity.class);
+                Intent intent = new Intent(this, MapsActivity.class);
                 startActivity(intent);
                 return true;
             default:
