@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
@@ -134,7 +133,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     .config(Bitmap.Config.ARGB_4444)
                     .centerInside()
                     .fit()
-                    .placeholder(R.drawable.image_loading)
+                    .placeholder(R.drawable.loading_fullsize_photo)
                     .into((ImageView) mContentView);
         }
     }

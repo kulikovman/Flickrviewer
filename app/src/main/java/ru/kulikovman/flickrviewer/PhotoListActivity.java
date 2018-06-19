@@ -58,7 +58,6 @@ public class PhotoListActivity extends AppCompatActivity {
 
         // Если база пустая
         if (mRealm.isEmpty()) {
-            mScrollListener.resetState();
             showProgressBar();
             mFlickrFetcher.loadPhoto();
         }
