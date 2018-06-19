@@ -1,6 +1,5 @@
 package ru.kulikovman.flickrviewer;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -14,7 +13,9 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import io.realm.Realm;
 import ru.kulikovman.flickrviewer.adapters.PhotoAdapter;
@@ -26,11 +27,12 @@ public class PhotoListActivity extends AppCompatActivity {
     private RealmHelper mRealmHelper;
     private FlickrFetcher mFlickrFetcher;
     private SharedPreferences mSharedPref;
-    private ProgressDialog mProgressDialog;
 
-    private RecyclerView mPhotoRecyclerView;
     private PhotoAdapter mPhotoAdapter;
     private EndlessRecyclerViewScrollListener mScrollListener;
+
+    private RecyclerView mPhotoRecyclerView;
+    private LinearLayout mProgressBarContainer;
 
     private String mSearchQuery = "";
 
@@ -42,11 +44,12 @@ public class PhotoListActivity extends AppCompatActivity {
 
         // Инициализация вью элементов
         mPhotoRecyclerView = findViewById(R.id.photo_recycler_view);
+        mProgressBarContainer = findViewById(R.id.progress_bar_container);
 
         // Инициализация разных нужностей
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
-        mFlickrFetcher = new FlickrFetcher(this);
+        mFlickrFetcher = new FlickrFetcher(this, mProgressBarContainer);
 
         // Восстанавливаем поисковый запрос и заголовок
         mSharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -56,6 +59,7 @@ public class PhotoListActivity extends AppCompatActivity {
         // Если база пустая
         if (mRealm.isEmpty()) {
             mScrollListener.resetState();
+            showProgressBar();
             mFlickrFetcher.loadPhoto();
         }
 
@@ -72,12 +76,6 @@ public class PhotoListActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(getString(R.string.search_query), mSearchQuery);
         editor.apply();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "Запущен onResume в PhotoListActivity");
     }
 
     @Override
@@ -121,6 +119,7 @@ public class PhotoListActivity extends AppCompatActivity {
                 setTitle(createNewTitle(s));
 
                 // Получение фото
+                showProgressBar();
                 mFlickrFetcher.loadPhoto(mSearchQuery, true);
 
                 // Свертывание поиска
@@ -137,14 +136,6 @@ public class PhotoListActivity extends AppCompatActivity {
         return true;
     }
 
-    private String createNewTitle(String title) {
-        if(title == null || title.isEmpty()) {
-            return getString(R.string.app_name);
-        } else {
-            return title.substring(0, 1).toUpperCase() + title.substring(1);
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Обрабатываем нажатие
@@ -153,6 +144,7 @@ public class PhotoListActivity extends AppCompatActivity {
                 mScrollListener.resetState();
                 setTitle(createNewTitle(""));
                 mSearchQuery = "";
+                showProgressBar();
                 mFlickrFetcher.loadPhoto(true);
                 return true;
             case R.id.menu_photo_on_map:
@@ -161,6 +153,18 @@ public class PhotoListActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showProgressBar() {
+        mProgressBarContainer.setVisibility(View.VISIBLE);
+    }
+
+    private String createNewTitle(String title) {
+        if(title == null || title.isEmpty()) {
+            return getString(R.string.app_name);
+        } else {
+            return title.substring(0, 1).toUpperCase() + title.substring(1);
         }
     }
 

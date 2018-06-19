@@ -3,6 +3,8 @@ package ru.kulikovman.flickrviewer;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -35,9 +37,11 @@ public class FlickrFetcher {
     private Realm mRealm;
     private Context mContext;
     private List<Photo> mPhotos;
+    private LinearLayout mProgressBarContainer;
 
-    FlickrFetcher(Context context) {
+    FlickrFetcher(Context context, LinearLayout progressBarContainer) {
         mContext = context;
+        mProgressBarContainer = progressBarContainer;
         mRealm = Realm.getDefaultInstance();
         mRealmHelper = RealmHelper.get();
     }
@@ -71,6 +75,7 @@ public class FlickrFetcher {
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        hideProgressBar();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 FlickrResponse flickrResponse = response.body();
@@ -81,29 +86,7 @@ public class FlickrFetcher {
                                     }
                                 }
 
-                                if (mPhotos != null) {
-                                    // Очистка базы
-                                    if (clearData) {
-                                        mRealm.beginTransaction();
-                                        mRealm.deleteAll();
-                                        mRealm.commitTransaction();
-                                    }
-
-                                    // Добавляем новые фото в список
-                                    for (Photo photo : mPhotos) {
-                                        // Если есть ссылка на миниатюру
-                                        if (photo.getUrlN() != null) {
-                                            // Если такого фото еще нет, то добавляем в базу
-                                            if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
-                                                mRealm.beginTransaction();
-                                                mRealm.insert(photo);
-                                                mRealm.commitTransaction();
-                                            } else {
-                                                Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
-                                            }
-                                        }
-                                    }
-                                }
+                                putReceivedPhotosInBase(clearData);
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
@@ -112,8 +95,7 @@ public class FlickrFetcher {
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_LONG).show();
-                        Log.d(TAG, "Error with internet connection: " + t.getMessage());
+                        showErrorToast(t);
                     }
                 });
     }
@@ -123,6 +105,7 @@ public class FlickrFetcher {
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        hideProgressBar();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 FlickrResponse flickrResponse = response.body();
@@ -133,29 +116,7 @@ public class FlickrFetcher {
                                     }
                                 }
 
-                                if (mPhotos != null) {
-                                    // Очистка базы
-                                    if (clearData) {
-                                        mRealm.beginTransaction();
-                                        mRealm.deleteAll();
-                                        mRealm.commitTransaction();
-                                    }
-
-                                    // Добавляем новые фото в список
-                                    for (Photo photo : mPhotos) {
-                                        // Если есть ссылка на миниатюру
-                                        if (photo.getUrlN() != null) {
-                                            // Если такого фото еще нет, то добавляем в базу
-                                            if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
-                                                mRealm.beginTransaction();
-                                                mRealm.insert(photo);
-                                                mRealm.commitTransaction();
-                                            } else {
-                                                Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
-                                            }
-                                        }
-                                    }
-                                }
+                                putReceivedPhotosInBase(clearData);
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
@@ -164,10 +125,45 @@ public class FlickrFetcher {
 
                     @Override
                     public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_LONG).show();
-                        Log.d(TAG, "Error with internet connection: " + t.getMessage());
+                        showErrorToast(t);
                     }
                 });
+    }
+
+    private void putReceivedPhotosInBase(boolean clearData) {
+        if (mPhotos != null) {
+            // Очистка базы
+            if (clearData) {
+                mRealm.beginTransaction();
+                mRealm.deleteAll();
+                mRealm.commitTransaction();
+            }
+
+            // Добавляем новые фото в список
+            for (Photo photo : mPhotos) {
+                // Если есть ссылка на миниатюру
+                if (photo.getUrlN() != null) {
+                    // Если такого фото еще нет, то добавляем в базу
+                    if (!mRealmHelper.isExistUrl(photo.getUrlN())) {
+                        mRealm.beginTransaction();
+                        mRealm.insert(photo);
+                        mRealm.commitTransaction();
+                    } else {
+                        Log.d(TAG, "Такая картинка уже есть в базе: " + photo.getUrlN());
+                    }
+                }
+            }
+        }
+    }
+
+    private void showErrorToast(@NonNull Throwable t) {
+        hideProgressBar();
+        Toast.makeText(mContext, "Error with internet connection", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Error with internet connection: " + t.getMessage());
+    }
+
+    private void hideProgressBar() {
+        mProgressBarContainer.setVisibility(View.INVISIBLE);
     }
 
     // Старый способ подключения
