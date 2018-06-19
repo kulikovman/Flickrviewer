@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -130,6 +131,10 @@ public class FullscreenActivity extends AppCompatActivity {
         if (photoUrl != null) {
             Picasso.get()
                     .load(photoUrl)
+                    .config(Bitmap.Config.ARGB_4444)
+                    .centerInside()
+                    .fit()
+                    .placeholder(R.drawable.image_loading)
                     .into((ImageView) mContentView);
         }
     }
