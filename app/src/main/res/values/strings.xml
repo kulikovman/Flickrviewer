@@ -1,7 +1,8 @@
 <resources>
     <!-- Названия -->
     <string name="app_name">Recent photo</string>
-    <string name="title_activity_fullscreen">Fullscreen photo</string>
+    <string name="title_fullscreen_activity">Fullscreen photo</string>
+    <string name="title_map_activity">Photo on map</string>
 
     <!-- Кнопки -->
     <string name="send_button">Send</string>

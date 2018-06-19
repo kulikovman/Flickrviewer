@@ -1,6 +1,7 @@
 package ru.kulikovman.flickrviewer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
@@ -140,6 +141,7 @@ public class PhotoListActivity extends AppCompatActivity {
         // Обрабатываем нажатие
         switch (item.getItemId()) {
             case R.id.menu_recent_photo:
+                // Загружаем Recent photo
                 mScrollListener.resetState();
                 setTitle(createNewTitle(""));
                 mSearchQuery = "";
@@ -148,7 +150,8 @@ public class PhotoListActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_photo_on_map:
                 // Открываем карту
-
+                Intent intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
