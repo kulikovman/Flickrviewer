@@ -12,22 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <LinearLayout
-        android:id="@+id/progress_bar_container"
+    <include
+        layout="@layout/progress_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="@color/black_overlay"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:indeterminateDrawable="@drawable/custom_data_loader"
-            android:indeterminateOnly="true"
-            android:layout_width="80dp"
-            android:layout_height="80dp"/>
-
-    </LinearLayout>
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

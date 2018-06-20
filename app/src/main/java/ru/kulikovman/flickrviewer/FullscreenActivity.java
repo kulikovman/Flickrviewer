@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -89,6 +91,8 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     };
 
+    private LinearLayout mProgressBarContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,12 +130,29 @@ public class FullscreenActivity extends AppCompatActivity {
             setTitle(photoTitle);
         }
 
+        mProgressBarContainer = findViewById(R.id.progress_bar_container);
+        mProgressBarContainer.setVisibility(View.VISIBLE);
+
         // Загружаем картинку
         if (photoUrl != null) {
             Picasso.get()
                     .load(photoUrl)
-                    .into((ImageView) mContentView);
+                    .into((ImageView) mContentView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            hideProgressBar();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            hideProgressBar();
+                        }
+                    });
         }
+    }
+
+    private void hideProgressBar() {
+        mProgressBarContainer.setVisibility(View.INVISIBLE);
     }
 
     @Override
