@@ -130,10 +130,6 @@ public class FullscreenActivity extends AppCompatActivity {
         if (photoUrl != null) {
             Picasso.get()
                     .load(photoUrl)
-                    .config(Bitmap.Config.ARGB_4444)
-                    .centerInside()
-                    .fit()
-                    .placeholder(R.drawable.loading_fullsize_photo)
                     .into((ImageView) mContentView);
         }
     }
