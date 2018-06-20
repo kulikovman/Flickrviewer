@@ -71,7 +71,7 @@ public class FlickrFetcher {
     }
 
     private void getRecentPhoto(int page, final boolean clearData) {
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page)
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, PER_PAGE, page)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
@@ -101,7 +101,7 @@ public class FlickrFetcher {
     }
 
     private void getSearchPhoto(String searchQuery, int page, final boolean clearData) {
-        App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, PER_PAGE, SIZE_URL, page, searchQuery)
+        App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, PER_PAGE, page, searchQuery)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
