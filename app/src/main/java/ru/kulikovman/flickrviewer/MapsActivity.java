@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,10 +18,29 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.kulikovman.flickrviewer.models.FlickrResponse;
+import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.Photos;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private final String TAG = "MapsActivity";
+
+    private final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
+    private final String SEARCH_METHOD = "flickr.photos.search";
+    private final String LOCATION_METHOD = "flickr.photos.geo.getLocation";
+    private final String FORMAT = "json";
+    private final int NOJSONCALLBACK = 1;
+    private final String SIZE_URL_S = "url_s";
+
 
     private GoogleMap mMap;
     private UiSettings mUiSettings;
+    private FlickrFetcher mFlickrFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +66,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mUiSettings = mMap.getUiSettings();
+        mFlickrFetcher = new FlickrFetcher(this, null);
 
         // Keep the UI Settings state in sync with the checkboxes.
         mUiSettings.setZoomControlsEnabled(true);
@@ -62,21 +83,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mMap.setMyLocationEnabled(true);
 
-        /*mUiSettings.setCompassEnabled(isChecked(R.id.compass_toggle));
-        mUiSettings.setMyLocationButtonEnabled(isChecked(R.id.mylocationbutton_toggle));
-        mMap.setMyLocationEnabled(isChecked(R.id.mylocationlayer_toggle));
-        mUiSettings.setScrollGesturesEnabled(isChecked(R.id.scroll_toggle));
-        mUiSettings.setZoomGesturesEnabled(isChecked(R.id.zoom_gestures_toggle));
-        mUiSettings.setTiltGesturesEnabled(isChecked(R.id.tilt_toggle));
-        mUiSettings.setRotateGesturesEnabled(isChecked(R.id.rotate_toggle));*/
-
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-
+        mFlickrFetcher.getPhotoByGeo(mMap, 10, -34, 151);
 
     }
 }

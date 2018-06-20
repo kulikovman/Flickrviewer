@@ -7,11 +7,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -20,6 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.kulikovman.flickrviewer.models.FlickrResponse;
 import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.PhotoLocation;
 import ru.kulikovman.flickrviewer.models.Photos;
 
 public class FlickrFetcher {
@@ -28,9 +32,11 @@ public class FlickrFetcher {
     private final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
     private final String RECENTS_METHOD = "flickr.photos.getRecent";
     private final String SEARCH_METHOD = "flickr.photos.search";
+    private final String LOCATION_METHOD = "flickr.photos.geo.getLocation";
     private final String FORMAT = "json";
     private final int NOJSONCALLBACK = 1;
-    private final String SIZE_URL = "url_n";
+    private final String SIZE_URL_N = "url_n";
+    private final String SIZE_URL_S = "url_s";
     private final int PER_PAGE = 60;
 
     private RealmHelper mRealmHelper;
@@ -71,7 +77,7 @@ public class FlickrFetcher {
     }
 
     private void getRecentPhoto(int page, final boolean clearData) {
-        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, PER_PAGE, page)
+        App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_N, PER_PAGE, page)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
@@ -101,7 +107,7 @@ public class FlickrFetcher {
     }
 
     private void getSearchPhoto(String searchQuery, int page, final boolean clearData) {
-        App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL, PER_PAGE, page, searchQuery)
+        App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_N, PER_PAGE, page, searchQuery)
                 .enqueue(new Callback<FlickrResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
@@ -117,6 +123,59 @@ public class FlickrFetcher {
                                 }
 
                                 putReceivedPhotosInBase(clearData);
+                            }
+                        } else {
+                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        showErrorToast(t);
+                    }
+                });
+    }
+
+    public void getPhotoByGeo(final GoogleMap map, int perPage, double lat, double lon) {
+        App.getApi().getSearchGeo(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_S, perPage, lat, lon)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                FlickrResponse flickrResponse = response.body();
+                                if (flickrResponse != null) {
+                                    Photos photos = flickrResponse.getPhotos();
+                                    if (photos != null) {
+                                        List<Photo> photoList = photos.getPhoto();
+
+                                        // Для каждой фотки получаем координаты и ставим маркер на карте
+                                        for (Photo photo : photoList) {
+                                            getPhotoLocation(map, photo.getId());
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        showErrorToast(t);
+                    }
+                });
+    }
+
+    private void getPhotoLocation(GoogleMap map, String photoId) {
+        App.getApi().getPhotoLocation(LOCATION_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, photoId)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
