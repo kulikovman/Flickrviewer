@@ -17,14 +17,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveCanceledListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -39,7 +42,8 @@ import ru.kulikovman.flickrviewer.models.photo.Photo;
 import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraMoveCanceledListener, GoogleMap.OnMapClickListener{
+        OnCameraMoveListener, OnCameraIdleListener {
+
     private final String TAG = "MapsActivity";
 
     private GoogleMap mMap;
@@ -71,9 +75,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMapClickListener(this);
-        mUiSettings = mMap.getUiSettings();
+        mMap.setOnCameraIdleListener(this);
+        mMap.setOnCameraMoveListener(this);
 
+        mUiSettings = mMap.getUiSettings();
 
         // Включение кнопок масштаба и текущего местоположения
         mUiSettings.setZoomControlsEnabled(true);
@@ -96,35 +101,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Открытие карты по текущим координатам
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10.0f));
 
-        // Здесь нужно получить тестовые фото в районе Сиднея
-        getPhotoByGeo(10, mLat, mLon);
+        // Фото вокруг стартовой точки координат
+        getPhotoByGeo(50, mLat, mLon);
 
-    }
-
-    @Override
-    public void onMapClick(LatLng latLng) {
-        mLat = latLng.latitude;
-        mLon = latLng.longitude;
-        Log.d(TAG, "Click to: " + mLat + " | " + mLon);
-
-        getPhotoByGeo(30, mLat, mLon);
     }
 
     @Override
     public void onCameraMove() {
-
+        Log.d(TAG, "onCameraMove");
     }
 
     @Override
-    public void onCameraMoveCanceled() {
+    public void onCameraIdle() {
+        Log.d(TAG, "onCameraIdle");
 
+        // Обновляем координаты
+        CameraPosition position = mMap.getCameraPosition();
+        mLat = position.target.latitude;
+        mLon = position.target.longitude;
 
+        // Загружаем новые фото
+        getPhotoByGeo(30, mLat, mLon);
     }
 
     public void getPhotoByGeo(int perPage, double lat, double lon) {
         App.getApi().getSearchByGeo(getString(R.string.search_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback),
-                getString(R.string.size_url_s), perPage, lat, lon, 30)
+                getString(R.string.size_url_s), perPage, lat, lon, 10)
                 .enqueue(new Callback<PhotoResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<PhotoResponse> call, @NonNull Response<PhotoResponse> response) {
@@ -235,6 +238,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d(TAG, "lat | lon = " + mLat + " | " + mLon);
         }
     }
+
 
 
 }
