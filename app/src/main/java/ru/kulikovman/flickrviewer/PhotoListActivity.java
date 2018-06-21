@@ -164,7 +164,7 @@ public class PhotoListActivity extends AppCompatActivity {
 
     private String createNewTitle(String title) {
         if(title == null || title.isEmpty()) {
-            return getString(R.string.app_name);
+            return getString(R.string.title_recent_photo);
         } else {
             return title.substring(0, 1).toUpperCase() + title.substring(1);
         }

@@ -79,7 +79,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-        getPhotoByGeo(10, -34, 151);
+        //getPhotoByGeo(10, -34, 151);
 
     }
 

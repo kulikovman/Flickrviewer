@@ -1,7 +1,8 @@
 <resources>
     <!-- Названия -->
     <string name="app_name">Flickr Viewer</string>
-    <string name="title_fullscreen_activity">Fullscreen photoWithLocation</string>
+    <string name="title_recent_photo">Recent photo</string>
+    <string name="title_fullscreen_activity">Fullscreen photo</string>
     <string name="title_map_activity">Photo on map</string>
 
     <!-- Кнопки -->
@@ -10,7 +11,7 @@
 
     <!-- Меню -->
     <string name="search">Search</string>
-    <string name="recent_photo">Recent photoWithLocation</string>
+    <string name="recent_photo">Recent photo</string>
     <string name="photo_on_map">Photo on map</string>
     <string name="title_activity_maps">Photo on map</string>
 
