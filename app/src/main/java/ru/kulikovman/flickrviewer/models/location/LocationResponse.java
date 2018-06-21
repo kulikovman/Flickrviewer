@@ -4,19 +4,19 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class LocationResponse {
-    @SerializedName("photoWithLocation")
+    @SerializedName("photo")
     @Expose
-    private PhotoWithLocation photoWithLocation;
+    private PhotoWithLocation photo;
     @SerializedName("stat")
     @Expose
     private String stat;
 
-    public PhotoWithLocation getPhotoWithLocation() {
-        return photoWithLocation;
+    public PhotoWithLocation getPhoto() {
+        return photo;
     }
 
-    public void setPhotoWithLocation(PhotoWithLocation photoWithLocation) {
-        this.photoWithLocation = photoWithLocation;
+    public void setPhoto(PhotoWithLocation photo) {
+        this.photo = photo;
     }
 
     public String getStat() {

@@ -102,7 +102,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                         // Для каждой фотки получаем координаты и ставим маркер на карте
                                         for (Photo photo : photoList) {
-                                            Log.d(TAG, "Получено фото: " + photo.getId() + " | " + photo.getTitle());
                                             getPhotoLocation(photo.getId(), photo.getUrlN());
                                         }
                                     }
@@ -127,22 +126,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onResponse(@NonNull Call<LocationResponse> call, @NonNull Response<LocationResponse> response) {
                         if (response.isSuccessful()) {
-                            Log.d(TAG, "Response is successful: " + response.code());
                             if (response.body() != null) {
-                                Log.d(TAG, "response.body() != null");
                                 LocationResponse locationResponse = response.body();
                                 if (locationResponse != null) {
-                                    Log.d(TAG, "locationResponse != null");
-                                    PhotoWithLocation photoWithLocation = locationResponse.getPhotoWithLocation();
+                                    PhotoWithLocation photoWithLocation = locationResponse.getPhoto();
                                     if (photoWithLocation != null) {
-                                        Log.d(TAG, "photoWithLocation != null");
                                         Location location = photoWithLocation.getLocation();
                                         if (location != null) {
-                                            Log.d(TAG, "location != null");
                                             String lat = location.getLatitude();
                                             String lon = location.getLongitude();
                                             if (lat != null && lon != null) {
-                                                Log.d(TAG, "lat != null && lon != null");
                                                 Log.d(TAG, "Координаты: " + lat + " | " + lon);
                                             }
                                         }
