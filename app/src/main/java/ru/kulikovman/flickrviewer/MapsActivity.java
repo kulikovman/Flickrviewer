@@ -1,9 +1,13 @@
 package ru.kulikovman.flickrviewer;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -80,13 +85,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mMap.setMyLocationEnabled(true);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Получение иекущих координат
+        getCurrentLocation();
+
+        // Открытие карты по текущим координатам
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10.0f));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-        getPhotoByGeo(50, -34, 151);
+        getPhotoByGeo(50, mLat, mLon);
 
     }
 
@@ -132,6 +138,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 mLat = Double.parseDouble(response.body().getPhoto().getLocation().getLatitude());
                                 mLon = Double.parseDouble(response.body().getPhoto().getLocation().getLongitude());
                             } catch (Exception ignored) {
+                                mLat = 0;
+                                mLon = 0;
                             }
 
                             if (mLat != 0 && mLon != 0) {
@@ -176,5 +184,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void showErrorToast(@NonNull Throwable t) {
         Toast.makeText(MapsActivity.this, "Error with internet connection", Toast.LENGTH_LONG).show();
         Log.d(TAG, "Error with internet connection: " + t.getMessage());
+    }
+
+    public void getCurrentLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = locationManager != null ? locationManager.getBestProvider(new Criteria(), true) : null;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.SYSTEM_ALERT_WINDOW,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 0);
+        }
+
+        Location location = locationManager != null ? locationManager.getLastKnownLocation(provider) : null;
+
+        if (location != null) {
+            mLat = location.getLatitude();
+            mLon = location.getLongitude();
+            Log.d(TAG, "lat | lon = " + mLat + " | " + mLon);
+        }
     }
 }
