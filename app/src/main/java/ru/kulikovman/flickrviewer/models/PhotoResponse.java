@@ -4,7 +4,7 @@ package ru.kulikovman.flickrviewer.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FlickrResponse {
+public class PhotoResponse {
     @SerializedName("photos")
     @Expose
     private Photos photos;

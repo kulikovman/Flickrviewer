@@ -7,23 +7,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.kulikovman.flickrviewer.models.FlickrResponse;
+import ru.kulikovman.flickrviewer.models.PhotoResponse;
 import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.PhotoLocation;
 import ru.kulikovman.flickrviewer.models.Photos;
 
 public class FlickrFetcher {
@@ -78,15 +74,15 @@ public class FlickrFetcher {
 
     private void getRecentPhoto(int page, final boolean clearData) {
         App.getApi().getRecent(RECENTS_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_N, PER_PAGE, page)
-                .enqueue(new Callback<FlickrResponse>() {
+                .enqueue(new Callback<PhotoResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                    public void onResponse(@NonNull Call<PhotoResponse> call, @NonNull Response<PhotoResponse> response) {
                         hideProgressBar();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                FlickrResponse flickrResponse = response.body();
-                                if (flickrResponse != null) {
-                                    Photos photos = flickrResponse.getPhotos();
+                                PhotoResponse photoResponse = response.body();
+                                if (photoResponse != null) {
+                                    Photos photos = photoResponse.getPhotos();
                                     if (photos != null) {
                                         mPhotos = photos.getPhoto();
                                     }
@@ -100,7 +96,7 @@ public class FlickrFetcher {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<PhotoResponse> call, @NonNull Throwable t) {
                         showErrorToast(t);
                     }
                 });
@@ -108,15 +104,15 @@ public class FlickrFetcher {
 
     private void getSearchPhoto(String searchQuery, int page, final boolean clearData) {
         App.getApi().getSearch(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_N, PER_PAGE, page, searchQuery)
-                .enqueue(new Callback<FlickrResponse>() {
+                .enqueue(new Callback<PhotoResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                    public void onResponse(@NonNull Call<PhotoResponse> call, @NonNull Response<PhotoResponse> response) {
                         hideProgressBar();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                FlickrResponse flickrResponse = response.body();
-                                if (flickrResponse != null) {
-                                    Photos photos = flickrResponse.getPhotos();
+                                PhotoResponse photoResponse = response.body();
+                                if (photoResponse != null) {
+                                    Photos photos = photoResponse.getPhotos();
                                     if (photos != null) {
                                         mPhotos = photos.getPhoto();
                                     }
@@ -130,7 +126,7 @@ public class FlickrFetcher {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<PhotoResponse> call, @NonNull Throwable t) {
                         showErrorToast(t);
                     }
                 });

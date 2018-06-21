@@ -22,7 +22,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.kulikovman.flickrviewer.models.FlickrResponse;
+import ru.kulikovman.flickrviewer.models.LocationResponse;
+import ru.kulikovman.flickrviewer.models.PhotoResponse;
 import ru.kulikovman.flickrviewer.models.Photo;
 import ru.kulikovman.flickrviewer.models.Photos;
 
@@ -86,14 +87,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         App.getApi().getSearchByGeo(getString(R.string.search_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback),
                 getString(R.string.size_url_s), perPage, lat, lon)
-                .enqueue(new Callback<FlickrResponse>() {
+                .enqueue(new Callback<PhotoResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                    public void onResponse(@NonNull Call<PhotoResponse> call, @NonNull Response<PhotoResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                FlickrResponse flickrResponse = response.body();
-                                if (flickrResponse != null) {
-                                    Photos photos = flickrResponse.getPhotos();
+                                PhotoResponse photoResponse = response.body();
+                                if (photoResponse != null) {
+                                    Photos photos = photoResponse.getPhotos();
                                     if (photos != null) {
                                         List<Photo> photoList = photos.getPhoto();
 
@@ -105,12 +106,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             }
                         } else {
-                            loggingResponseCode(response);
+                            Log.d(TAG, "Response is not successful: " + response.code());
                         }
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<PhotoResponse> call, @NonNull Throwable t) {
                         showErrorToast(t);
                     }
                 });
@@ -119,27 +120,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void getPhotoLocation(String photoId, String imageUrl) {
         App.getApi().getPhotoLocation(getString(R.string.location_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback), photoId)
-                .enqueue(new Callback<FlickrResponse>() {
+                .enqueue(new Callback<LocationResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                    public void onResponse(@NonNull Call<LocationResponse> call, @NonNull Response<LocationResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
 
                             }
                         } else {
-                            loggingResponseCode(response);
+                            Log.d(TAG, "Response is not successful: " + response.code());
                         }
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<LocationResponse> call, @NonNull Throwable t) {
                         showErrorToast(t);
                     }
                 });
-    }
-
-    private void loggingResponseCode(@NonNull Response<FlickrResponse> response) {
-        Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
     }
 
     private void showErrorToast(@NonNull Throwable t) {

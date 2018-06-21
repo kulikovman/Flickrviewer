@@ -3,7 +3,8 @@ package ru.kulikovman.flickrviewer;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import ru.kulikovman.flickrviewer.models.FlickrResponse;
+import ru.kulikovman.flickrviewer.models.LocationResponse;
+import ru.kulikovman.flickrviewer.models.PhotoResponse;
 
 public interface FlickrApi {
 
@@ -13,24 +14,24 @@ public interface FlickrApi {
     // &format=json&nojsoncallback=1&per_page=60&page=1&extras=url_n&text=girl
 
     @GET("rest/")
-    Call<FlickrResponse> getRecent(@Query("method") String method,
-                                   @Query("api_key") String api_key,
-                                   @Query("format") String format,
-                                   @Query("nojsoncallback") String nojsoncallback,
-                                   @Query("extras") String size_url,
-                                   @Query("per_page") int per_page,
-                                   @Query("page") int page
+    Call<PhotoResponse> getRecent(@Query("method") String method,
+                                  @Query("api_key") String api_key,
+                                  @Query("format") String format,
+                                  @Query("nojsoncallback") String nojsoncallback,
+                                  @Query("extras") String size_url,
+                                  @Query("per_page") int per_page,
+                                  @Query("page") int page
     );
 
     @GET("rest/")
-    Call<FlickrResponse> getSearch(@Query("method") String method,
-                                   @Query("api_key") String api_key,
-                                   @Query("format") String format,
-                                   @Query("nojsoncallback") String nojsoncallback,
-                                   @Query("extras") String size_url,
-                                   @Query("per_page") int per_page,
-                                   @Query("page") int page,
-                                   @Query("text") String searchQuery
+    Call<PhotoResponse> getSearch(@Query("method") String method,
+                                  @Query("api_key") String api_key,
+                                  @Query("format") String format,
+                                  @Query("nojsoncallback") String nojsoncallback,
+                                  @Query("extras") String size_url,
+                                  @Query("per_page") int per_page,
+                                  @Query("page") int page,
+                                  @Query("text") String searchQuery
     );
 
 
@@ -38,14 +39,14 @@ public interface FlickrApi {
     // https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=92cc75b96a9f82a32bc29eb21a254fe4&format=json&nojsoncallback=1&extras=url_s&per_page=10&lat=37.7994&lon=122.3950
 
     @GET("rest/")
-    Call<FlickrResponse> getSearchByGeo(@Query("method") String method,
-                                        @Query("api_key") String api_key,
-                                        @Query("format") String format,
-                                        @Query("nojsoncallback") String nojsoncallback,
-                                        @Query("extras") String size_url,
-                                        @Query("per_page") int per_page,
-                                        @Query("lat") double lat,
-                                        @Query("lon") double lon
+    Call<PhotoResponse> getSearchByGeo(@Query("method") String method,
+                                       @Query("api_key") String api_key,
+                                       @Query("format") String format,
+                                       @Query("nojsoncallback") String nojsoncallback,
+                                       @Query("extras") String size_url,
+                                       @Query("per_page") int per_page,
+                                       @Query("lat") double lat,
+                                       @Query("lon") double lon
     );
 
     // Пример запроса:
@@ -53,10 +54,10 @@ public interface FlickrApi {
     // id = 27807466577
 
     @GET("rest/")
-    Call<FlickrResponse> getPhotoLocation(@Query("method") String method,
-                                          @Query("api_key") String api_key,
-                                          @Query("format") String format,
-                                          @Query("nojsoncallback") String nojsoncallback,
-                                          @Query("photo_id") String photo_id
+    Call<LocationResponse> getPhotoLocation(@Query("method") String method,
+                                            @Query("api_key") String api_key,
+                                            @Query("format") String format,
+                                            @Query("nojsoncallback") String nojsoncallback,
+                                            @Query("photo_id") String photo_id
     );
 }
