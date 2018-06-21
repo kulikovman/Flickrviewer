@@ -20,8 +20,8 @@
     <string name="search_method">flickr.photos.search</string>
     <string name="location_method">flickr.photos.geo.getLocation</string>
     <string name="format">json</string>
+    <string name="nojsoncallback">1</string>
     <string name="size_url_n">url_n</string> // small, 320 on longest side
     <string name="size_url_s">url_s</string> // small square 75x75
-    <string name="nojsoncallback">1</string>
 
 </resources>
