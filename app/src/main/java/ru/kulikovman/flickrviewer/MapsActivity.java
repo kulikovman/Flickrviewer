@@ -46,6 +46,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private UiSettings mUiSettings;
     private List<Photo> mPhotoList;
+    private boolean mLoading;
     private double mLat;
     private double mLon;
 
@@ -99,13 +100,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10.0f));
 
         // Фото вокруг стартовой точки координат
+        mLoading = true;
         getPhotoByGeo(50, mLat, mLon, 10);
-
     }
 
     @Override
     public void onCameraMove() {
         Log.d(TAG, "onCameraMove");
+        mLoading = false;
     }
 
     @Override
@@ -118,6 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLon = position.target.longitude;
 
         // Загружаем новые фото
+        mLoading = true;
         getPhotoByGeo(30, mLat, mLon, 5);
     }
 
@@ -137,7 +140,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (mPhotoList != null) {
                                 // Получаем координаты фотографий
                                 for (Photo photo : mPhotoList) {
-                                    getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                    if (mLoading) {
+                                        getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                    } else {
+                                        break;
+                                    }
                                 }
                             }
                         } else {
