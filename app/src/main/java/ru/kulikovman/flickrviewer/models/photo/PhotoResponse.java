@@ -1,23 +1,23 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.photo;
+
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Location {
-
-    @SerializedName("photo")
+public class PhotoResponse {
+    @SerializedName("photos")
     @Expose
-    private Photo photo;
+    private Photos photos;
     @SerializedName("stat")
     @Expose
     private String stat;
 
-    public Photo getPhoto() {
-        return photo;
+    public Photos getPhotos() {
+        return photos;
     }
 
-    public void setPhoto(Photo photo) {
-        this.photo = photo;
+    public void setPhotos(Photos photos) {
+        this.photos = photos;
     }
 
     public String getStat() {
@@ -27,5 +27,4 @@ public class Location {
     public void setStat(String stat) {
         this.stat = stat;
     }
-
 }

@@ -18,9 +18,9 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.kulikovman.flickrviewer.models.PhotoResponse;
-import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.Photos;
+import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
+import ru.kulikovman.flickrviewer.models.photo.Photo;
+import ru.kulikovman.flickrviewer.models.photo.Photos;
 
 public class FlickrFetcher {
     private final String TAG = "FlickrFetcher";

@@ -16,7 +16,7 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import ru.kulikovman.flickrviewer.FullscreenActivity;
 import ru.kulikovman.flickrviewer.R;
-import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.photo.Photo;
 
 public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.PhotoHolder> {
     private static final String TAG = "PhotoAdapter";

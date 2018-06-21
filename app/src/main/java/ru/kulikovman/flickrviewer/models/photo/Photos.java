@@ -1,9 +1,11 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.photo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import ru.kulikovman.flickrviewer.models.photo.Photo;
 
 public class Photos {
     @SerializedName("page")

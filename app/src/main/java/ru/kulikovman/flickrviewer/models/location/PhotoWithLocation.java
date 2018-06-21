@@ -1,15 +1,15 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.location;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PhotoGeo {
+public class PhotoWithLocation {
     @SerializedName("id")
     @Expose
     private String id;
     @SerializedName("location")
     @Expose
-    private Location_ location;
+    private Location location;
 
     public String getId() {
         return id;
@@ -19,11 +19,11 @@ public class PhotoGeo {
         this.id = id;
     }
 
-    public Location_ getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(Location_ location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 }

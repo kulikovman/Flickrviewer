@@ -1,10 +1,9 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.location;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Location_ {
-
+public class Location {
     @SerializedName("latitude")
     @Expose
     private String latitude;

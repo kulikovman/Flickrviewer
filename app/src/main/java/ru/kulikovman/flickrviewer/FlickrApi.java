@@ -3,8 +3,8 @@ package ru.kulikovman.flickrviewer;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import ru.kulikovman.flickrviewer.models.LocationResponse;
-import ru.kulikovman.flickrviewer.models.PhotoResponse;
+import ru.kulikovman.flickrviewer.models.location.LocationResponse;
+import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
 
 public interface FlickrApi {
 

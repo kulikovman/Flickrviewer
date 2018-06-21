@@ -2,7 +2,7 @@ package ru.kulikovman.flickrviewer;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import ru.kulikovman.flickrviewer.models.Photo;
+import ru.kulikovman.flickrviewer.models.photo.Photo;
 
 public class RealmHelper {
     private static RealmHelper sRealmHelper;

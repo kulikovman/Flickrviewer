@@ -22,10 +22,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.kulikovman.flickrviewer.models.LocationResponse;
-import ru.kulikovman.flickrviewer.models.PhotoResponse;
-import ru.kulikovman.flickrviewer.models.Photo;
-import ru.kulikovman.flickrviewer.models.Photos;
+import ru.kulikovman.flickrviewer.models.location.LocationResponse;
+import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
+import ru.kulikovman.flickrviewer.models.photo.Photo;
+import ru.kulikovman.flickrviewer.models.photo.Photos;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private final String TAG = "MapsActivity";

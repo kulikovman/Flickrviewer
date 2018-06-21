@@ -1,9 +1,9 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.location;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class County {
+public class Locality {
 
     @SerializedName("_content")
     @Expose

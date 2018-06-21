@@ -1,4 +1,4 @@
-package ru.kulikovman.flickrviewer.models;
+package ru.kulikovman.flickrviewer.models.location;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
