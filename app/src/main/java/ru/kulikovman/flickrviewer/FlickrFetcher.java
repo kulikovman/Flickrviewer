@@ -34,7 +34,7 @@ public class FlickrFetcher {
     private final String SEARCH_METHOD = "flickr.photos.search";
     private final String LOCATION_METHOD = "flickr.photos.geo.getLocation";
     private final String FORMAT = "json";
-    private final int NOJSONCALLBACK = 1;
+    private final String NOJSONCALLBACK = "1";
     private final String SIZE_URL_N = "url_n";
     private final String SIZE_URL_S = "url_s";
     private final int PER_PAGE = 60;
@@ -123,59 +123,6 @@ public class FlickrFetcher {
                                 }
 
                                 putReceivedPhotosInBase(clearData);
-                            }
-                        } else {
-                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        showErrorToast(t);
-                    }
-                });
-    }
-
-    public void getPhotoByGeo(final GoogleMap map, int perPage, double lat, double lon) {
-        App.getApi().getSearchGeo(SEARCH_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, SIZE_URL_S, perPage, lat, lon)
-                .enqueue(new Callback<FlickrResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                FlickrResponse flickrResponse = response.body();
-                                if (flickrResponse != null) {
-                                    Photos photos = flickrResponse.getPhotos();
-                                    if (photos != null) {
-                                        List<Photo> photoList = photos.getPhoto();
-
-                                        // Для каждой фотки получаем координаты и ставим маркер на карте
-                                        for (Photo photo : photoList) {
-                                            getPhotoLocation(map, photo.getId());
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
-                        showErrorToast(t);
-                    }
-                });
-    }
-
-    private void getPhotoLocation(GoogleMap map, String photoId) {
-        App.getApi().getPhotoLocation(LOCATION_METHOD, API_KEY, FORMAT, NOJSONCALLBACK, photoId)
-                .enqueue(new Callback<FlickrResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-
                             }
                         } else {
                             Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,25 +29,15 @@ import ru.kulikovman.flickrviewer.models.Photos;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private final String TAG = "MapsActivity";
 
-    private final String API_KEY = "92cc75b96a9f82a32bc29eb21a254fe4";
-    private final String SEARCH_METHOD = "flickr.photos.search";
-    private final String LOCATION_METHOD = "flickr.photos.geo.getLocation";
-    private final String FORMAT = "json";
-    private final int NOJSONCALLBACK = 1;
-    private final String SIZE_URL_S = "url_s";
-
-
     private GoogleMap mMap;
     private UiSettings mUiSettings;
-    private FlickrFetcher mFlickrFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -66,20 +55,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mUiSettings = mMap.getUiSettings();
-        mFlickrFetcher = new FlickrFetcher(this, null);
 
-        // Keep the UI Settings state in sync with the checkboxes.
+        // Включение кнопок масштаба и текущего местоположения
         mUiSettings.setZoomControlsEnabled(true);
         mUiSettings.setMyLocationButtonEnabled(true);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+
+        // Проверка разрешений на определение текущего местонахождения
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Запрос если их нет
+            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            }, 0);
         }
         mMap.setMyLocationEnabled(true);
 
@@ -89,7 +77,72 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-        mFlickrFetcher.getPhotoByGeo(mMap, 10, -34, 151);
+        getPhotoByGeo(10, -34, 151);
 
+    }
+
+    public void getPhotoByGeo(int perPage, double lat, double lon) {
+        App.getApi().getSearchByGeo(getString(R.string.search_method), getString(R.string.api_key),
+                getString(R.string.format), getString(R.string.nojsoncallback),
+                getString(R.string.size_url_s), perPage, lat, lon)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                FlickrResponse flickrResponse = response.body();
+                                if (flickrResponse != null) {
+                                    Photos photos = flickrResponse.getPhotos();
+                                    if (photos != null) {
+                                        List<Photo> photoList = photos.getPhoto();
+
+                                        // Для каждой фотки получаем координаты и ставим маркер на карте
+                                        for (Photo photo : photoList) {
+                                            getPhotoLocation(photo.getId(), photo.getUrlN());
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            loggingResponseCode(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        showErrorToast(t);
+                    }
+                });
+    }
+
+    private void getPhotoLocation(String photoId, String imageUrl) {
+        App.getApi().getPhotoLocation(getString(R.string.location_method), getString(R.string.api_key),
+                getString(R.string.format), getString(R.string.nojsoncallback), photoId)
+                .enqueue(new Callback<FlickrResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<FlickrResponse> call, @NonNull Response<FlickrResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+
+                            }
+                        } else {
+                            loggingResponseCode(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<FlickrResponse> call, @NonNull Throwable t) {
+                        showErrorToast(t);
+                    }
+                });
+    }
+
+    private void loggingResponseCode(@NonNull Response<FlickrResponse> response) {
+        Log.d(TAG, "Запрос прошел, но что-то пошло не так: " + response.code());
+    }
+
+    private void showErrorToast(@NonNull Throwable t) {
+        Toast.makeText(MapsActivity.this, "Error with internet connection", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Error with internet connection: " + t.getMessage());
     }
 }
