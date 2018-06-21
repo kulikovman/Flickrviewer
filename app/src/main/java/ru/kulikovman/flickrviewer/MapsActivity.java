@@ -22,7 +22,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.kulikovman.flickrviewer.models.location.Location;
 import ru.kulikovman.flickrviewer.models.location.LocationResponse;
+import ru.kulikovman.flickrviewer.models.location.PhotoWithLocation;
 import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
 import ru.kulikovman.flickrviewer.models.photo.Photo;
 import ru.kulikovman.flickrviewer.models.photo.Photos;
@@ -79,7 +81,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-        //getPhotoByGeo(10, -34, 151);
+        getPhotoByGeo(10, -34, 151);
 
     }
 
@@ -100,6 +102,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                         // Для каждой фотки получаем координаты и ставим маркер на карте
                                         for (Photo photo : photoList) {
+                                            Log.d(TAG, "Получено фото: " + photo.getId() + " | " + photo.getTitle());
                                             getPhotoLocation(photo.getId(), photo.getUrlN());
                                         }
                                     }
@@ -124,7 +127,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onResponse(@NonNull Call<LocationResponse> call, @NonNull Response<LocationResponse> response) {
                         if (response.isSuccessful()) {
+                            Log.d(TAG, "Response is successful: " + response.code());
                             if (response.body() != null) {
+                                Log.d(TAG, "response.body() != null");
+                                LocationResponse locationResponse = response.body();
+                                if (locationResponse != null) {
+                                    Log.d(TAG, "locationResponse != null");
+                                    PhotoWithLocation photoWithLocation = locationResponse.getPhotoWithLocation();
+                                    if (photoWithLocation != null) {
+                                        Log.d(TAG, "photoWithLocation != null");
+                                        Location location = photoWithLocation.getLocation();
+                                        if (location != null) {
+                                            Log.d(TAG, "location != null");
+                                            String lat = location.getLatitude();
+                                            String lon = location.getLongitude();
+                                            if (lat != null && lon != null) {
+                                                Log.d(TAG, "lat != null && lon != null");
+                                                Log.d(TAG, "Координаты: " + lat + " | " + lon);
+                                            }
+                                        }
+                                    }
+                                }
 
                             }
                         } else {
