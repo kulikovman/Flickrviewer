@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.kulikovman.flickrviewer.api.FlickrApi;
 
 public class App extends Application {
     private static Application sInstance;

@@ -1,4 +1,4 @@
-package ru.kulikovman.flickrviewer;
+package ru.kulikovman.flickrviewer.api;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -46,7 +46,8 @@ public interface FlickrApi {
                                        @Query("extras") String size_url,
                                        @Query("per_page") int per_page,
                                        @Query("lat") double lat,
-                                       @Query("lon") double lon
+                                       @Query("lon") double lon,
+                                       @Query("radius") int radius
     );
 
     // Пример запроса:
