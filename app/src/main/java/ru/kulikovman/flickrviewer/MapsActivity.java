@@ -2,11 +2,15 @@ package ru.kulikovman.flickrviewer;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -14,9 +18,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import retrofit2.Call;
@@ -34,6 +48,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private UiSettings mUiSettings;
+    private Bitmap mBitmap;
+    private ImageView mTestImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +75,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mUiSettings = mMap.getUiSettings();
+        mTestImage = findViewById(R.id.test_image);
 
         // Включение кнопок масштаба и текущего местоположения
         mUiSettings.setZoomControlsEnabled(true);
@@ -81,7 +98,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Здесь нужно получить тестовые фото в районе Сиднея
-        getPhotoByGeo(10, -34, 151);
+        getPhotoByGeo(30, -34, 151);
 
     }
 
@@ -102,7 +119,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                         // Для каждой фотки получаем координаты и ставим маркер на карте
                                         for (Photo photo : photoList) {
-                                            getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlN());
+                                            getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                            /*if (photo.getUrlS() != null) {
+                                            }*/
                                         }
                                     }
                                 }
@@ -119,33 +138,50 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
-    private void getPhotoLocation(String photoId, final String title, String imageUrl) {
+    private void getPhotoLocation(String photoId, final String title, final String imageUrl) {
         App.getApi().getPhotoLocation(getString(R.string.location_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback), photoId)
                 .enqueue(new Callback<LocationResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<LocationResponse> call, @NonNull Response<LocationResponse> response) {
                         if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                LocationResponse locationResponse = response.body();
-                                if (locationResponse != null) {
-                                    PhotoWithLocation photoWithLocation = locationResponse.getPhoto();
-                                    if (photoWithLocation != null) {
-                                        Location location = photoWithLocation.getLocation();
-                                        if (location != null) {
-                                            double lat = Double.parseDouble(location.getLatitude());
-                                            double lon = Double.parseDouble(location.getLongitude());
-                                            if (lat != 0 && lon != 0) {
-                                                Log.d(TAG, "Координаты: " + lat + " | " + lon);
+                            double lat = 0;
+                            double lon = 0;
+                            try {
+                                lat = Double.parseDouble(response.body().getPhoto().getLocation().getLatitude());
+                                lon = Double.parseDouble(response.body().getPhoto().getLocation().getLongitude());
+                            } catch (Exception ignored) {
+                            }
 
-                                                // Добавляем маркеры на карту
-                                                LatLng photo = new LatLng(lat, lon);
-                                                mMap.addMarker(new MarkerOptions().position(photo).title(title));
+                            if (lat != 0 && lon != 0) {
+                                Log.d(TAG, "Координаты: " + lat + " | " + lon + " | " + imageUrl);
+
+                                // Формируем положение на карте
+                                final LatLng position = new LatLng(lat, lon);
+
+                                // Получаем картинку и создаем маркер
+                                Picasso.get()
+                                        .load(imageUrl)
+                                        .resize(150, 150)
+                                        .centerCrop()
+                                        .into(new Target() {
+                                            @Override
+                                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                mMap.addMarker(new MarkerOptions()
+                                                        .position(position)
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                                        .title(title)
+                                                );
                                             }
-                                        }
-                                    }
-                                }
 
+                                            @Override
+                                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                            }
+
+                                            @Override
+                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                            }
+                                        });
                             }
                         } else {
                             Log.d(TAG, "Response is not successful: " + response.code());

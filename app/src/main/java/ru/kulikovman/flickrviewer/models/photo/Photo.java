@@ -40,6 +40,9 @@ public class Photo extends RealmObject {
     @SerializedName("url_n")
     @Expose
     private String urlN;
+    @SerializedName("url_s")
+    @Expose
+    private String urlS;
     @SerializedName("height_n")
     @Expose
     private String heightN;
@@ -125,6 +128,14 @@ public class Photo extends RealmObject {
 
     public void setUrlN(String urlN) {
         this.urlN = urlN;
+    }
+
+    public String getUrlS() {
+        return urlS;
+    }
+
+    public void setUrlS(String urlS) {
+        this.urlS = urlS;
     }
 
     public String getHeightN() {
