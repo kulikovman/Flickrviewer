@@ -102,7 +102,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                         // Для каждой фотки получаем координаты и ставим маркер на карте
                                         for (Photo photo : photoList) {
-                                            getPhotoLocation(photo.getId(), photo.getUrlN());
+                                            getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlN());
                                         }
                                     }
                                 }
@@ -119,7 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
-    private void getPhotoLocation(String photoId, String imageUrl) {
+    private void getPhotoLocation(String photoId, final String title, String imageUrl) {
         App.getApi().getPhotoLocation(getString(R.string.location_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback), photoId)
                 .enqueue(new Callback<LocationResponse>() {
@@ -133,10 +133,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     if (photoWithLocation != null) {
                                         Location location = photoWithLocation.getLocation();
                                         if (location != null) {
-                                            String lat = location.getLatitude();
-                                            String lon = location.getLongitude();
-                                            if (lat != null && lon != null) {
+                                            double lat = Double.parseDouble(location.getLatitude());
+                                            double lon = Double.parseDouble(location.getLongitude());
+                                            if (lat != 0 && lon != 0) {
                                                 Log.d(TAG, "Координаты: " + lat + " | " + lon);
+
+                                                // Добавляем маркеры на карту
+                                                LatLng photo = new LatLng(lat, lon);
+                                                mMap.addMarker(new MarkerOptions().position(photo).title(title));
                                             }
                                         }
                                     }
