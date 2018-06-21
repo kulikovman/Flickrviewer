@@ -17,12 +17,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
-import com.google.android.gms.maps.GoogleMap.OnCameraMoveCanceledListener;
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
-import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -102,7 +99,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10.0f));
 
         // Фото вокруг стартовой точки координат
-        getPhotoByGeo(50, mLat, mLon);
+        getPhotoByGeo(50, mLat, mLon, 10);
 
     }
 
@@ -121,13 +118,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLon = position.target.longitude;
 
         // Загружаем новые фото
-        getPhotoByGeo(30, mLat, mLon);
+        getPhotoByGeo(30, mLat, mLon, 5);
     }
 
-    public void getPhotoByGeo(int perPage, double lat, double lon) {
+    public void getPhotoByGeo(int perPage, double lat, double lon, int radius) {
         App.getApi().getSearchByGeo(getString(R.string.search_method), getString(R.string.api_key),
                 getString(R.string.format), getString(R.string.nojsoncallback),
-                getString(R.string.size_url_s), perPage, lat, lon, 10)
+                getString(R.string.size_url_s), perPage, lat, lon, radius)
                 .enqueue(new Callback<PhotoResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<PhotoResponse> call, @NonNull Response<PhotoResponse> response) {
