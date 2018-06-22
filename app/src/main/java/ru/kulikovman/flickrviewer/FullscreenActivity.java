@@ -169,8 +169,9 @@ public class FullscreenActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button.
-            NavUtils.navigateUpFromSameTask(this);
+            // Меняем поведение кнопки со стрелкой
+            //NavUtils.navigateUpFromSameTask(this); // Запускает родительскую активити
+            onBackPressed(); // Возвращаемся назад
             return true;
         }
         return super.onOptionsItemSelected(item);
