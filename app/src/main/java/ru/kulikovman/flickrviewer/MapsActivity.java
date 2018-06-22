@@ -2,6 +2,7 @@ package ru.kulikovman.flickrviewer;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -19,12 +20,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -40,7 +43,7 @@ import ru.kulikovman.flickrviewer.models.photo.Photo;
 import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
-        OnCameraIdleListener, OnCameraMoveStartedListener {
+        OnCameraIdleListener, OnCameraMoveStartedListener, OnMarkerClickListener {
 
     private final String TAG = "MapsActivity";
 
@@ -77,6 +80,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setOnCameraMoveStartedListener(this);
         mMap.setOnCameraIdleListener(this);
+        mMap.setOnMarkerClickListener(this);
 
         mUiSettings = mMap.getUiSettings();
 
@@ -139,7 +143,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     if (mLoading) {
                                         if (!mUrlList.contains(photo.getUrlS())) {
                                             mUrlList.add(photo.getUrlS());
-                                            getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                            getPhotoLocation(photo);
                                         } else {
                                             Log.d(TAG, "Url is exist");
                                         }
@@ -162,9 +166,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
-    private void getPhotoLocation(String photoId, final String title, final String imageUrl) {
+    private void getPhotoLocation(final Photo photo) {
         App.getApi().getPhotoLocation(getString(R.string.location_method), getString(R.string.api_key),
-                getString(R.string.format), getString(R.string.nojsoncallback), photoId)
+                getString(R.string.format), getString(R.string.nojsoncallback), photo.getId())
                 .enqueue(new Callback<LocationResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<LocationResponse> call, @NonNull Response<LocationResponse> response) {
@@ -178,21 +182,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
 
                             if (mLat != 0 && mLon != 0) {
-                                Log.d(TAG, "Координаты: " + mLat + " | " + mLon + " | " + imageUrl);
+                                Log.d(TAG, "Coordinates: " + mLat + " | " + mLon);
 
                                 // Получаем картинку и создаем маркер на карте
                                 Picasso.get()
-                                        .load(imageUrl)
+                                        .load(photo.getUrlS())
                                         .resize(150, 150)
                                         .centerCrop()
                                         .into(new Target() {
                                             @Override
                                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                mMap.addMarker(new MarkerOptions()
+                                                Marker marker = mMap.addMarker(new MarkerOptions()
                                                         .position(new LatLng(mLat, mLon))
                                                         .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                                                        .title(title)
+                                                        .title(photo.getTitle())
                                                 );
+                                                marker.setTag(createLinkFullscreenPhoto(photo));
                                             }
 
                                             @Override
@@ -246,6 +251,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public String createLinkFullscreenPhoto(Photo photo) {
+        // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg + " " + Title
+        return "https://farm" + photo.getFarm() + ".staticflickr.com/"
+                + photo.getServer() + "/" + photo.getId() + "_" + photo.getSecret() + "_b.jpg"
+                + " " + photo.getTitle();
+    }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        // Получаем ссылку и заголовок из тега маркера
+        String tag = (String) marker.getTag();
+        String[] temp = null;
+        if (tag != null) {
+            temp = tag.split(" ");
+        }
 
+        // Передаем ссылку в фуллскрин активити
+        if (temp != null) {
+            Log.d(TAG, "Link/Title: " + temp[0] + " | " + temp[1]);
+
+            Intent intent = new Intent(this, FullscreenActivity.class);
+            intent.putExtra("url_full_size", temp[0]);
+            intent.putExtra("photo_title", temp[1]);
+            startActivity(intent);
+        }
+
+        return true;
+    }
 }
