@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
-import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -39,13 +40,14 @@ import ru.kulikovman.flickrviewer.models.photo.Photo;
 import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
-        OnCameraMoveListener, OnCameraIdleListener {
+        OnCameraIdleListener, OnCameraMoveStartedListener {
 
     private final String TAG = "MapsActivity";
 
     private GoogleMap mMap;
     private UiSettings mUiSettings;
     private List<Photo> mPhotoList;
+    private List<String> mUrlList = new ArrayList<>();
     private boolean mLoading;
     private double mLat;
     private double mLon;
@@ -73,8 +75,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnCameraMoveStartedListener(this);
         mMap.setOnCameraIdleListener(this);
-        mMap.setOnCameraMoveListener(this);
 
         mUiSettings = mMap.getUiSettings();
 
@@ -93,20 +95,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mMap.setMyLocationEnabled(true);
 
-        // Получение иекущих координат
-        getCurrentLocation();
-
         // Открытие карты по текущим координатам
+        getCurrentLocation();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLon), 10.0f));
-
-        // Фото вокруг стартовой точки координат
-        mLoading = true;
-        getPhotoByGeo(50, mLat, mLon, 10);
     }
 
     @Override
-    public void onCameraMove() {
-        Log.d(TAG, "onCameraMove");
+    public void onCameraMoveStarted(int i) {
+        Log.d(TAG, "onCameraMoveStarted");
         mLoading = false;
     }
 
@@ -141,11 +137,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 // Получаем координаты фотографий
                                 for (Photo photo : mPhotoList) {
                                     if (mLoading) {
-                                        getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                        if (!mUrlList.contains(photo.getUrlS())) {
+                                            mUrlList.add(photo.getUrlS());
+                                            getPhotoLocation(photo.getId(), photo.getTitle(), photo.getUrlS());
+                                        } else {
+                                            Log.d(TAG, "Url is exist");
+                                        }
                                     } else {
+                                        Log.d(TAG, "mLoading == false");
                                         break;
                                     }
                                 }
+                                mLoading = false;
                             }
                         } else {
                             Log.d(TAG, "Response is not successful: " + response.code());
