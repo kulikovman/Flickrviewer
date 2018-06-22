@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private UiSettings mUiSettings;
     private List<Photo> mPhotoList;
     private List<String> mUrlList = new ArrayList<>();
+    private List<Pair> mCoordinates = new ArrayList<>();
     private boolean mLoading;
     private double mLat;
     private double mLon;
@@ -183,6 +185,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             if (mLat != 0 && mLon != 0) {
                                 Log.d(TAG, "Coordinates: " + mLat + " | " + mLon);
+
+
 
                                 // Получаем картинку и создаем маркер на карте
                                 Picasso.get()
