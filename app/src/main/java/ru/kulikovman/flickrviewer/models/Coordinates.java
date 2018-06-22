@@ -1,12 +1,15 @@
 package ru.kulikovman.flickrviewer.models;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Coordinates {
     double mLat;
     double mLon;
 
     public Coordinates(double lat, double lon) {
-        mLat = lat;
-        mLon = lon;
+        mLat = new BigDecimal(lat).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        mLon = new BigDecimal(lon).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     public double getLat() {

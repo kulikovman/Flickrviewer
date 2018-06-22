@@ -39,6 +39,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.kulikovman.flickrviewer.models.Coordinates;
 import ru.kulikovman.flickrviewer.models.location.LocationResponse;
 import ru.kulikovman.flickrviewer.models.photo.Photo;
 import ru.kulikovman.flickrviewer.models.photo.PhotoResponse;
@@ -52,7 +53,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private UiSettings mUiSettings;
     private List<Photo> mPhotoList;
     private List<String> mUrlList = new ArrayList<>();
-    private List<Pair> mCoordinates = new ArrayList<>();
+    private List<Coordinates> mCoordinates = new ArrayList<>();
     private boolean mLoading;
     private double mLat;
     private double mLon;
@@ -186,32 +187,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (mLat != 0 && mLon != 0) {
                                 Log.d(TAG, "Coordinates: " + mLat + " | " + mLon);
 
+                                // Проверка похожих координат
+                                Coordinates coordinates = new Coordinates(mLat, mLon);
+                                if (!mCoordinates.contains(coordinates)) {
+                                    // Добавляем координаты в список
+                                    mCoordinates.add(coordinates);
 
+                                    // Получаем картинку и создаем маркер на карте
+                                    Picasso.get()
+                                            .load(photo.getUrlS())
+                                            .resize(150, 150)
+                                            .centerCrop()
+                                            .into(new Target() {
+                                                @Override
+                                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                                            .position(new LatLng(mLat, mLon))
+                                                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                                            .title(photo.getTitle())
+                                                    );
+                                                    marker.setTag(createLinkFullscreenPhoto(photo));
+                                                }
 
-                                // Получаем картинку и создаем маркер на карте
-                                Picasso.get()
-                                        .load(photo.getUrlS())
-                                        .resize(150, 150)
-                                        .centerCrop()
-                                        .into(new Target() {
-                                            @Override
-                                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                Marker marker = mMap.addMarker(new MarkerOptions()
-                                                        .position(new LatLng(mLat, mLon))
-                                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                                                        .title(photo.getTitle())
-                                                );
-                                                marker.setTag(createLinkFullscreenPhoto(photo));
-                                            }
+                                                @Override
+                                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                                }
 
-                                            @Override
-                                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                            }
-
-                                            @Override
-                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                            }
-                                        });
+                                                @Override
+                                                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                }
+                                            });
+                                } else {
+                                    Log.d(TAG, "Coordinates is exist");
+                                }
                             }
                         } else {
                             Log.d(TAG, "Response is not successful: " + response.code());
