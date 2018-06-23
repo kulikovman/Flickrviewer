@@ -20,4 +20,12 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <!-- Стиль кнопок фуллскрин активити -->
+    <style name="FullscreenButtonStyle" parent="AppTheme">
+        <item name="android:background">@drawable/button_fullscreen</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+    </style>
+
 </resources>

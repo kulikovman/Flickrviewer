@@ -28,6 +28,8 @@
     <color name="violet">#a95eff</color>
     <color name="pink">#ff5efa</color>
 
+    // Дополнительные цвета
     <color name="black_overlay">#cc121212</color>
+    <color name="turquoise_pressed">#008178</color>
 
 </resources>
