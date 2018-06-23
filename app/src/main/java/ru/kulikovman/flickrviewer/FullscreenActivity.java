@@ -219,4 +219,13 @@ public class FullscreenActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public void openPhotoInBrowser(View view) {
+    }
+
+    public void openPhotoByEmail(View view) {
+    }
+
+    public void savePhoto(View view) {
+    }
 }
