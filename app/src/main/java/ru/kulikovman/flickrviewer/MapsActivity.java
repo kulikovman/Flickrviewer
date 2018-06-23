@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -206,7 +205,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                             .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                                                             .title(photo.getTitle())
                                                     );
-                                                    marker.setTag(createLinkFullscreenPhoto(photo));
+                                                    marker.setTag(createLinkLargePhoto(photo) + " " + photo.getTitle());
                                                 }
 
                                                 @Override
@@ -263,11 +262,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String createLinkFullscreenPhoto(Photo photo) {
-        // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg + " " + Title
-        return "https://farm" + photo.getFarm() + ".staticflickr.com/"
-                + photo.getServer() + "/" + photo.getId() + "_" + photo.getSecret() + "_b.jpg"
-                + " " + photo.getTitle();
+    public String createLinkLargePhoto(Photo photo) {
+        // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
+        // b - large, 1024 on longest side
+        return "https://farm" + photo.getFarm() + ".staticflickr.com/" + photo.getServer()
+                + "/" + photo.getId() + "_" + photo.getSecret() + "_b.jpg";
+                //+ " " + photo.getTitle();
     }
 
     @Override
