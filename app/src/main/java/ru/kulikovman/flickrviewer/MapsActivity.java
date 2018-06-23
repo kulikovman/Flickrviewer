@@ -267,7 +267,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // b - large, 1024 on longest side
         return "https://farm" + photo.getFarm() + ".staticflickr.com/" + photo.getServer()
                 + "/" + photo.getId() + "_" + photo.getSecret() + "_b.jpg";
-                //+ " " + photo.getTitle();
     }
 
     @Override
