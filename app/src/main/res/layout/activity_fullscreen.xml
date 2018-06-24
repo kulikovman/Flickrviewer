@@ -46,7 +46,7 @@
 
             <ImageButton
                 android:id="@+id/send_button"
-                android:onClick="openPhotoByEmail"
+                android:onClick="sendPhotoByEmail"
                 style="@style/FullscreenButtonStyle"
                 app:srcCompat="@drawable/ic_email_24dp"/>
 

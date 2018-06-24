@@ -153,4 +153,15 @@ public class Photo extends RealmObject {
     public void setWidthN(Integer widthN) {
         this.widthN = widthN;
     }
+
+    public String getLinkLargePhoto(Photo photo) {
+        // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
+        // b - large, 1024 on longest side
+        return "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_" + secret + "_b.jpg";
+    }
+
+    public String getLinkPhotoInWeb(Photo photo) {
+        // https://www.flickr.com/photos/12037949754@N01/155761353/
+        return "https://www.flickr.com/photos/" + owner + "/" + id + "/";
+    }
 }

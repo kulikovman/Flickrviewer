@@ -221,9 +221,10 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     public void openPhotoInBrowser(View view) {
+
     }
 
-    public void openPhotoByEmail(View view) {
+    public void sendPhotoByEmail(View view) {
     }
 
     public void savePhoto(View view) {
