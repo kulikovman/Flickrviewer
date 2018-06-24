@@ -25,4 +25,7 @@
     <string name="size_url_n">url_n</string> // small, 320 on longest side
     <string name="size_url_s">url_s</string> // small square 75x75
 
+    <!-- Разное -->
+    <string name="send_photo_subject">Photo</string>
+
 </resources>

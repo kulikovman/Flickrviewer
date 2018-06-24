@@ -2,7 +2,6 @@ package ru.kulikovman.flickrviewer;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -174,11 +172,24 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     public void openPhotoInBrowser(View view) {
-        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(mPhotoWebUrl));
-        startActivity(i);
+        // Открываем ссылку в браузере
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mPhotoWebUrl));
+        startActivity(intent);
     }
 
     public void sendPhotoByEmail(View view) {
+        // Формирование темы письма
+        String subject = getString(R.string.send_photo_subject);
+        if (mPhotoTitle != null) {
+            subject = subject + ": " + mPhotoTitle;
+        }
+
+        // Отправляем через подходящую программу
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, mPhotoWebUrl);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        startActivity(intent);
     }
 
     public void savePhoto(View view) {
