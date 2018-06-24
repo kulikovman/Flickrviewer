@@ -205,7 +205,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                             .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                                                             .title(photo.getTitle())
                                                     );
-                                                    marker.setTag(createLinkLargePhoto(photo) + " " + photo.getTitle());
+                                                    marker.setTag(photo.getTwoLinkAndTitle());
                                                 }
 
                                                 @Override
