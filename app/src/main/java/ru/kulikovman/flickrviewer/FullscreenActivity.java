@@ -1,7 +1,9 @@
 package ru.kulikovman.flickrviewer;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -157,7 +159,6 @@ public class FullscreenActivity extends AppCompatActivity {
     private void loadLinksAndTitle() {
         String twoLinkAndTitle = (String) getIntent().getSerializableExtra("two_link_and_title");
 
-        // Разбираем строку и вытаскиваем данные
         String[] temp = null;
         if (twoLinkAndTitle != null) {
             temp = twoLinkAndTitle.split(" ");
@@ -170,6 +171,17 @@ public class FullscreenActivity extends AppCompatActivity {
             mPhotoWebUrl = temp[1];
             mPhotoTitle = temp[2];
         }
+    }
+
+    public void openPhotoInBrowser(View view) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(mPhotoWebUrl));
+        startActivity(i);
+    }
+
+    public void sendPhotoByEmail(View view) {
+    }
+
+    public void savePhoto(View view) {
     }
 
     private void hideProgressBar() {
@@ -239,15 +251,5 @@ public class FullscreenActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
-
-    public void openPhotoInBrowser(View view) {
-
-    }
-
-    public void sendPhotoByEmail(View view) {
-    }
-
-    public void savePhoto(View view) {
     }
 }
