@@ -40,20 +40,22 @@
 
             <ImageButton
                 android:id="@+id/open_button"
-                android:onClick="openPhotoInBrowser"
                 style="@style/FullscreenButtonStyle"
+                android:onClick="openPhotoInBrowser"
                 app:srcCompat="@drawable/ic_public_24dp"/>
 
             <ImageButton
                 android:id="@+id/send_button"
-                android:onClick="sendPhotoByEmail"
                 style="@style/FullscreenButtonStyle"
+                android:onClick="sendPhotoByEmail"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_email_24dp"/>
 
             <ImageButton
                 android:id="@+id/save_button"
-                android:onClick="savePhoto"
                 style="@style/FullscreenButtonStyle"
+                android:onClick="savePhoto"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_save_24dp"/>
 
         </LinearLayout>
