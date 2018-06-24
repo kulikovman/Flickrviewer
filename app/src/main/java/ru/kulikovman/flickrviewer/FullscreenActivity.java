@@ -126,19 +126,7 @@ public class FullscreenActivity extends AppCompatActivity {
         findViewById(R.id.send_button).setOnTouchListener(mDelayHideTouchListener);
 
         // Получаем ссылки и заголовок
-        String twoLinkAndTitle = (String) getIntent().getSerializableExtra("two_link_and_title");
-
-        // Разбираем строку и вытаскиваем данные
-        String[] temp = null;
-        if (twoLinkAndTitle != null) {
-            temp = twoLinkAndTitle.split(" ");
-        }
-
-        if (temp != null) {
-            mPhotoLargeUrl = temp[0];
-            mPhotoWebUrl = temp[1];
-            mPhotoTitle = temp[2];
-        }
+        loadLinksAndTitle();
 
         // Ставим заголовок
         if (mPhotoTitle != null) {
@@ -163,6 +151,24 @@ public class FullscreenActivity extends AppCompatActivity {
                             hideProgressBar();
                         }
                     });
+        }
+    }
+
+    private void loadLinksAndTitle() {
+        String twoLinkAndTitle = (String) getIntent().getSerializableExtra("two_link_and_title");
+
+        // Разбираем строку и вытаскиваем данные
+        String[] temp = null;
+        if (twoLinkAndTitle != null) {
+            temp = twoLinkAndTitle.split(" ");
+        } else {
+            onBackPressed();
+        }
+
+        if (temp != null) {
+            mPhotoLargeUrl = temp[0];
+            mPhotoWebUrl = temp[1];
+            mPhotoTitle = temp[2];
         }
     }
 
