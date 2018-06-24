@@ -267,8 +267,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Получаем данные из тега маркера
         String tag = (String) marker.getTag();
 
-        // Передаем данные в фуллскрин активити
         if (tag != null) {
+            // Передаем ссылки и заголовок в фуллскрин активити
             Intent intent = new Intent(this, FullscreenActivity.class);
             intent.putExtra("two_link_and_title", tag);
             startActivity(intent);

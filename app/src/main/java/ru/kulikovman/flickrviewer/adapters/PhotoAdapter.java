@@ -54,16 +54,9 @@ public class PhotoAdapter extends RealmRecyclerViewAdapter<Photo, PhotoAdapter.P
 
         @Override
         public void onClick(View v) {
-            // Формируем ссылку на оригинал фото
-            // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
-            String urlFullSize = "https://farm" + mPhoto.getFarm() + ".staticflickr.com/"
-                    + mPhoto.getServer() + "/" + mPhoto.getId() + "_" + mPhoto.getSecret()
-                    + "_b.jpg";
-
-            // Передаем ссылку в фуллскрин активити
+            // Передаем ссылки и заголовок в фуллскрин активити
             Intent intent = new Intent(mContext, FullscreenActivity.class);
-            intent.putExtra("url_full_size", urlFullSize);
-            intent.putExtra("photo_title", mPhoto.getTitle());
+            intent.putExtra("two_link_and_title", mPhoto.getTwoLinkAndTitle());
             mContext.startActivity(intent);
         }
     }
