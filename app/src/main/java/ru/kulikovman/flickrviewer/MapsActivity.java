@@ -262,29 +262,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String createLinkLargePhoto(Photo photo) {
-        // https://farm1.staticflickr.com/895/27983986247_52caf06758_b.jpg
-        // b - large, 1024 on longest side
-        return "https://farm" + photo.getFarm() + ".staticflickr.com/" + photo.getServer()
-                + "/" + photo.getId() + "_" + photo.getSecret() + "_b.jpg";
-    }
-
     @Override
     public boolean onMarkerClick(Marker marker) {
-        // Получаем ссылку и заголовок из тега маркера
+        // Получаем данные из тега маркера
         String tag = (String) marker.getTag();
-        String[] temp = null;
+
+        // Передаем данные в фуллскрин активити
         if (tag != null) {
-            temp = tag.split(" ");
-        }
-
-        // Передаем ссылку в фуллскрин активити
-        if (temp != null) {
-            Log.d(TAG, "Link/Title: " + temp[0] + " | " + temp[1]);
-
             Intent intent = new Intent(this, FullscreenActivity.class);
-            intent.putExtra("url_full_size", temp[0]);
-            intent.putExtra("photo_title", temp[1]);
+            intent.putExtra("two_link_and_title", tag);
             startActivity(intent);
         }
 

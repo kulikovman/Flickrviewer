@@ -92,6 +92,9 @@ public class FullscreenActivity extends AppCompatActivity {
     };
 
     private LinearLayout mProgressBarContainer;
+    private String mPhotoLargeUrl;
+    private String mPhotoWebUrl;
+    private String mPhotoTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +109,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.original_photo_container);
+        mProgressBarContainer = findViewById(R.id.progress_bar_container);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -121,22 +125,33 @@ public class FullscreenActivity extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.send_button).setOnTouchListener(mDelayHideTouchListener);
 
-        // Получаем значения
-        String photoUrl = (String) getIntent().getSerializableExtra("url_full_size");
-        String photoTitle = (String) getIntent().getSerializableExtra("photo_title");
+        // Получаем ссылки и заголовок
+        String twoLinkAndTitle = (String) getIntent().getSerializableExtra("two_link_and_title");
 
-        // Ставим заголовок
-        if (photoTitle != null) {
-            setTitle(photoTitle);
+        // Разбираем строку и вытаскиваем данные
+        String[] temp = null;
+        if (twoLinkAndTitle != null) {
+            temp = twoLinkAndTitle.split(" ");
         }
 
-        mProgressBarContainer = findViewById(R.id.progress_bar_container);
+        if (temp != null) {
+            mPhotoLargeUrl = temp[0];
+            mPhotoWebUrl = temp[1];
+            mPhotoTitle = temp[2];
+        }
+
+        // Ставим заголовок
+        if (mPhotoTitle != null) {
+            setTitle(mPhotoTitle);
+        }
+
+        // Показываем индикатор загруки
         mProgressBarContainer.setVisibility(View.VISIBLE);
 
         // Загружаем картинку
-        if (photoUrl != null) {
+        if (mPhotoLargeUrl != null) {
             Picasso.get()
-                    .load(photoUrl)
+                    .load(mPhotoLargeUrl)
                     .into((ImageView) mContentView, new Callback() {
                         @Override
                         public void onSuccess() {
