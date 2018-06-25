@@ -9,13 +9,13 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // The minimum amount of items to have below your current scroll position, before mLoading more.
     private int mVisibleThreshold = 10;
     // The current offset index of data you have loaded
-    private int mCurrentPage = 1;
+    private int mCurrentPage = 2;
     // The total number of items in the dataset after the last load
     private int mPreviousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
     private boolean mLoading = true;
     // Sets the starting page index
-    private int mStartingPageIndex = 1;
+    private int mStartingPageIndex = 2;
 
     private RecyclerView.LayoutManager mLayoutManager;
 
