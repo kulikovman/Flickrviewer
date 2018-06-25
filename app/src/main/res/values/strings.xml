@@ -1,19 +1,14 @@
 <resources>
     <!-- Названия -->
-    <string name="app_name">Flickr Viewer</string>
+    <string name="app_name">Viewer photo</string>
     <string name="title_recent_photo">Recent photo</string>
     <string name="title_fullscreen_activity">Fullscreen photo</string>
     <string name="title_map_activity">Photo on map</string>
-
-    <!-- Кнопки -->
-    <string name="send_button">Send</string>
-    <string name="save_button">Save</string>
 
     <!-- Меню -->
     <string name="search">Search</string>
     <string name="recent_photo">Recent photo</string>
     <string name="photo_on_map">Photo on map</string>
-    <string name="title_activity_maps">Photo on map</string>
 
     <!-- Параметры для rest запросов -->
     <string name="api_key">92cc75b96a9f82a32bc29eb21a254fe4</string>
