@@ -54,7 +54,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
+            android:label="@string/title_map_activity"
             android:parentActivityName=".PhotoListActivity"
             android:theme="@style/AppTheme">
             <meta-data

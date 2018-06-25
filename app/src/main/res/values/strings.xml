@@ -11,14 +11,14 @@
     <string name="photo_on_map">Photo on map</string>
 
     <!-- Параметры для rest запросов -->
-    <string name="api_key">92cc75b96a9f82a32bc29eb21a254fe4</string>
-    <string name="recent_method">flickr.photos.getRecent</string>
-    <string name="search_method">flickr.photos.search</string>
-    <string name="location_method">flickr.photos.geo.getLocation</string>
-    <string name="format">json</string>
-    <string name="nojsoncallback">1</string>
-    <string name="size_url_n">url_n</string> // small, 320 on longest side
-    <string name="size_url_s">url_s</string> // small square 75x75
+    <string name="api_key" translatable="false">92cc75b96a9f82a32bc29eb21a254fe4</string>
+    <string name="recent_method" translatable="false">flickr.photos.getRecent</string>
+    <string name="search_method" translatable="false">flickr.photos.search</string>
+    <string name="location_method" translatable="false">flickr.photos.geo.getLocation</string>
+    <string name="format" translatable="false">json</string>
+    <string name="nojsoncallback" translatable="false">1</string>
+    <string name="size_url_n" translatable="false">url_n</string> // small, 320 on longest side
+    <string name="size_url_s" translatable="false">url_s</string> // small square 75x75
 
     <!-- Разное -->
     <string name="send_photo_subject">Photo</string>

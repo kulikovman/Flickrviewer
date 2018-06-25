@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Просмотр фото</string>
+    <string name="title_recent_photo">Последние фото</string>
+    <string name="title_fullscreen_activity">Полноэкранный просмотр</string>
+    <string name="title_map_activity">Фото на карте</string>
+    <string name="search">Поиск</string>
+    <string name="recent_photo">Последние фото</string>
+    <string name="photo_on_map">Фото на карте</string>
+    <string name="send_photo_subject">Фото</string>
+</resources>
