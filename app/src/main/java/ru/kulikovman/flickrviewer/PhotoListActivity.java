@@ -27,11 +27,9 @@ public class PhotoListActivity extends AppCompatActivity {
     private Realm mRealm;
     private RealmHelper mRealmHelper;
     private FlickrFetcher mFlickrFetcher;
-    private SharedPreferences mSharedPref;
 
     private PhotoAdapter mPhotoAdapter;
     private EndlessRecyclerViewScrollListener mScrollListener;
-
     private RecyclerView mPhotoRecyclerView;
     private LinearLayout mProgressBarContainer;
 
@@ -53,8 +51,7 @@ public class PhotoListActivity extends AppCompatActivity {
         mFlickrFetcher = new FlickrFetcher(this, mProgressBarContainer);
 
         // Восстанавливаем поисковый запрос и заголовок
-        mSharedPref = getPreferences(Context.MODE_PRIVATE);
-        mSearchQuery = mSharedPref.getString(getString(R.string.search_query), "");
+        mSearchQuery = PreferencesHelper.loadSearchQuery(this);
         setTitle(createNewTitle(mSearchQuery));
 
         // Если база пустая
@@ -63,19 +60,8 @@ public class PhotoListActivity extends AppCompatActivity {
             mFlickrFetcher.loadPhoto();
         }
 
-        // Запуск сетки фотографий
+        // Запуск списка фотографий
         setupPhotoRecyclerView();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "Запущен onPause в PhotoListActivity");
-
-        // Сохранение поискового запроса
-        SharedPreferences.Editor editor = mSharedPref.edit();
-        editor.putString(getString(R.string.search_query), mSearchQuery);
-        editor.apply();
     }
 
     @Override
@@ -116,6 +102,7 @@ public class PhotoListActivity extends AppCompatActivity {
                 // Подготовка к запросу
                 mScrollListener.resetState();
                 mSearchQuery = s;
+                PreferencesHelper.saveSearchQuery(PhotoListActivity.this, s);
                 setTitle(createNewTitle(s));
 
                 // Получение фото
@@ -174,13 +161,11 @@ public class PhotoListActivity extends AppCompatActivity {
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
         int width = 0;
-        int height = 0;
         if (wm != null) {
             Display display = wm.getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
             width = size.x;
-            height = size.y;
         }
 
         int numberOfColumns = width / convertDpToPx(this, 120);
@@ -191,50 +176,4 @@ public class PhotoListActivity extends AppCompatActivity {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp,
                 context.getResources().getDisplayMetrics());
     }
-
-    /*private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
-        private ProgressDialog mProgressDialog;
-        private String mQuery;
-
-        public FetchItemsTask(String query) {
-            mQuery = query;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            mProgressDialog = ProgressDialog
-                    .show(PhotoListActivity.this, "Loading", "Wait while loading...", false);
-        }
-
-        @Override
-        protected List<GalleryItem> doInBackground(Void... params) {
-            if (mQuery == null) {
-                return new FlickrFetcher().fetchRecentPhotos();
-            } else {
-                mItems.clear();
-                return new FlickrFetcher().searchPhotos(mQuery);
-            }
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-
-        }
-
-        @Override
-        protected void onPostExecute(List<GalleryItem> items) {
-            mProgressDialog.dismiss();
-            Log.d(TAG, "Список содержит: " + items.size() + " значений");
-
-            // Добавляем новые фото в список
-            for (GalleryItem item : items) {
-                if (!mItems.contains(item)) {
-                    mItems.add(item);
-                }
-            }
-
-            setupPhotoRecyclerView();
-        }
-    }*/
 }
