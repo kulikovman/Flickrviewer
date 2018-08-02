@@ -1,17 +1,20 @@
 # Flickrviewer
-Приложение предназначено для поиска и просмотра фотографий на популярном фото-сервисе Flickr.
+The application is designed to search and view photos on the popular photo-service Flickr.
 
-## Функционал приложения:
-* Лента последних загруженных на Flickr фотографий.
-* Фотографии можно искать по ключевым словам.
-* Последние загруженные данные кэшируются.
-* Просмотр фотографий на карте.
-* Полноэкранный просмотр фотографий.
-* Можно открыть в браузере страницу фотографии с подробной информацией.
-* Можно поделиться ссылкой на фотографию.
+## Application Functionality:
+* Tape of the latest uploaded to Flickr photos.
+* You can search for photos by keywords.
+* The last downloaded data is cached.
+* View photos on the map.
+* Full-screen viewing of photos.
+* You can open a photo page in the browser with detailed information.
+* You can share a link to a photo.
 
-## Использованные библиотеки:
+## Used libraries:
 Realm, Retrofit2, Picasso, OkHttp3
 
-## Скриншоты:
+## Screenshots:
 ![screenshot of sample](http://kulikovman.ru/android/img/FlickrViewer.jpg)
+
+## Link to Google Play:
+<https://play.google.com/store/apps/details?id=ru.kulikovman.tasklist>
