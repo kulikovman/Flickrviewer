@@ -15,6 +15,3 @@ Realm, Retrofit2, Picasso, OkHttp3
 
 ## Screenshots:
 ![screenshot of sample](http://kulikovman.ru/android/img/FlickrViewer.jpg)
-
-## Link to Google Play:
-<https://play.google.com/store/apps/details?id=ru.kulikovman.tasklist>
